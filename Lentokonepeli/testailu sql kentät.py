@@ -23,9 +23,13 @@ yhteys = mysql.connector.connect(
          host='localhost',
          port= 3306,
          database='flight_game',
-         user='max',
-         password='password',
+         user='user1',
+         password='password1',
          autocommit=True
          )
 
 print(airports())
+
+
+
+
