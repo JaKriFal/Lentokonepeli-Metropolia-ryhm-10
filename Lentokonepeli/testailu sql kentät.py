@@ -12,7 +12,7 @@ def airports():
     sql += "where type = '" + airport_type + "' having `distance_in_km` <= '" + etäisyys + "'"
     sql += "order by `distance_in_km` asc"
 
-    print(sql)
+    #print(sql)
     kursori = yhteys.cursor()
     kursori.execute(sql)
     tulos = kursori.fetchall()
