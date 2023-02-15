@@ -24,6 +24,6 @@ def get_airport(country_code):
         print("No airports found for that country.")
     else:
         airport = random.choice(results)
-        print("Aloitus lentokenttäsi on: ", airport)
+        print("Your starting airport is: ", airport)
 
 get_airport(country)
