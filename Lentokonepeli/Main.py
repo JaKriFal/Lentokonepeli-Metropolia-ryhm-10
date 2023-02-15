@@ -10,7 +10,3 @@ class User:
         self.risk = risk
         self.co_2 = co_2
 
-    def Upgrade(self,):
-
-
-        return
