@@ -2,7 +2,7 @@ import mysql.connector
 import random
 
 nordic_countries = {'Denmark': 'DK', 'Finland': 'FI', 'Iceland': 'IS', 'Norway': 'NO', 'Sweden': 'SE'}
-country = input(f"Choose a Nordic country ({', '.join(nordic_countries.keys())}): ")
+country = input(f"Choose a Nordic countrycode to get a spawn location, DK, FI, IS, NO or SE ({', '.join(nordic_countries.keys())}): ")
 
 
 def get_airport(country_code):
@@ -24,6 +24,6 @@ def get_airport(country_code):
         print("No airports found for that country.")
     else:
         airport = random.choice(results)
-        print(airport)
+        print("Aloitus lentokenttäsi on: ", airport)
 
 get_airport(country)
