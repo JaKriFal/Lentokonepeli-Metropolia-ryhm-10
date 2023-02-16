@@ -1,4 +1,10 @@
+# Tänne importit
 
+
+# Tänne globaalien muuttujien alustaminen
+vic_con = False
+
+# Tänne luokka-alustukset (varmaan lähinnä User/Pelaaja)
 
 class User:
     def __init__(self, name, money, time, player_location, upgrades, risk, co_2):
@@ -10,3 +16,12 @@ class User:
         self.risk = risk
         self.co_2 = co_2
 
+#Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
+
+
+# Main loop
+while vic_con == False:
+    print("looppi")
+
+
+#Tänne toiminnot jotka ajetaan kun pelikerta päättyy
