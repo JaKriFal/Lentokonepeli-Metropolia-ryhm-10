@@ -35,7 +35,7 @@ Pelaaja = User("name")
 while vic_con == False:
     testi = Pelaaja.lopeta_peli()
     if testi:
-        vic_conn = True
+        vic_con = True
         print("Peli lopetettu")
     else:
         print("Peli jatkuu")
