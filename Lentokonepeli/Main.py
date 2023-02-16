@@ -34,9 +34,8 @@ class User:
         self.co_2_rate = 0
         self.vic_con = False
 
-
-
-
+    def Liiku(self):
+        return 0
 
     def lopeta_peli(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
@@ -54,7 +53,7 @@ class User:
 
 name = input("Anna pelaajan nimi:")
 
-Pelaaja = User("name")
+Pelaaja = User(name)
 
 # Main loop
 while Pelaaja.vic_con == False:

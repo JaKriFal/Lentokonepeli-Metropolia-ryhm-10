@@ -1,4 +1,4 @@
-import mysql.connector
+import mariadb
 
 from prettytable import PrettyTable ,from_db_cursor
 
@@ -34,7 +34,7 @@ def airports():
     print(table)
     return
 
-yhteys = mysql.connector.connect(
+yhteys = mariadb.connect(
          host='localhost',
          port= 3306,
          database='flight_game',
