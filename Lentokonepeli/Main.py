@@ -16,6 +16,8 @@ class User:
         self.risk = risk
         self.co_2 = co_2
 
+    def lopeta_peli(self):
+        return 0
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 
