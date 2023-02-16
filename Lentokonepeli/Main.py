@@ -50,7 +50,7 @@ class User:
 
 name = input("Anna pelaajan nimi:")
 
-Pelaaja = User("name")
+Pelaaja = User(name)
 
 # Main loop
 while Pelaaja.vic_con == False:
