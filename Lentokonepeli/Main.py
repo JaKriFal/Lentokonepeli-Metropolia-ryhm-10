@@ -9,4 +9,3 @@ class User:
         self.upgrades = upgrades
         self.risk = risk
         self.co_2 = co_2
-
