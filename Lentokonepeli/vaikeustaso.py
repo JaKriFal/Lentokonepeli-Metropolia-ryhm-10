@@ -15,3 +15,15 @@ else:
     exit()
 
 print(f"The score requirement for {difficulty} difficulty is {score_requirement}.")
+
+
+scoreboard = {}
+
+final_score=score_requirement
+name = input("Enter player's name: ")
+score = int(final_score)
+scoreboard[name] = score
+
+print("\nScoreboard:")
+for name, score in scoreboard.items():
+    print(f"{name}: {score}")
