@@ -47,7 +47,7 @@ class User:
         self.upgrades = 0
         self.risk = 0
         self.co_2 = 0
-        self.co_2_rate = 0
+        self.co_2_rate = 0.02
         self.vic_con = False
 
     def Lennä(self):
@@ -83,6 +83,8 @@ class User:
         self.player_location = tulos[int(kohde) - 1][0]
     #kauanko lennosta kesti
         self.time = self.time + tulos[int(kohde) -1][3] * 0.5
+    #co2 päästöt
+        self.co_2 = tulos[int(kohde) -1][3] * self.co_2_rate
         return
 
     def lopeta_peli(self):
@@ -95,7 +97,8 @@ class User:
             print("Komentoa ei tunnistettu")
 
     def tulosta_tiedot(self):
-        print(f"Pelaajan nimi on {self.name}, paikka on {self.player_location}, aikaa kulunut {self.time}min ja rahamäärä on {self.money}")
+        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} min \n"
+              f"CO2 päästösi ovat {self.co_2} tonnia \nja rahamäärä on {self.money}")
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
