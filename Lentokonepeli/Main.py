@@ -85,11 +85,11 @@ class User:
         self.nykyinen_lat = str(tulos[int(kohde) - 1][1])
         self.player_location = tulos[int(kohde) - 1][0]
     #kauanko lennossa kesti
-        self.time = self.time + tulos[int(kohde) -1][3] * 0.01
+        self.time = self.time + tulos[int(kohde) - 1][3] * 0.01
     #co2 päästöt
-        self.co_2 = tulos[int(kohde) -1][3] * self.co_2_rate
+        self.co_2 = tulos[int(kohde) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
-        self.akun_varaustaso = int(self.akun_varaustaso) - tulos[int(kohde) -1][3]
+        self.akun_varaustaso = int(self.akun_varaustaso) - tulos[int(kohde) - 1][3]
 
         return
 
