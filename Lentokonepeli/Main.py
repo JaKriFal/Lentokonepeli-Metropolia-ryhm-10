@@ -17,6 +17,7 @@ class User:
         self.co_2 = 0
         self.co_2_rate = 0
 
+
     def lopeta_peli(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
