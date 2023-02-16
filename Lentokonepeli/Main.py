@@ -1,4 +1,5 @@
 # Tänne importit
+import random
 import mariadb
 from prettytable import PrettyTable
 
@@ -41,8 +42,10 @@ class User:
         self.nykyinen_lon = str(24.957996168)
         self.nykyinen_lat = str(60.316998732)
         self.airport_type = "medium_airport"
-        self.range = str(400)
+        self.range = str(250)
         self.maa = "FI"
+        self.akun_varaustaso = self.range
+        self.lataus_nopeus = 30
         self.player_location = "helsinki"
         self.upgrades = 0
         self.risk = 0
@@ -81,10 +84,27 @@ class User:
         self.nykyinen_lon = str(tulos[int(kohde) - 1][2])
         self.nykyinen_lat = str(tulos[int(kohde) - 1][1])
         self.player_location = tulos[int(kohde) - 1][0]
-    #kauanko lennosta kesti
-        self.time = self.time + tulos[int(kohde) -1][3] * 0.5
+    #kauanko lennossa kesti
+        self.time = self.time + tulos[int(kohde) -1][3] * 0.01
     #co2 päästöt
         self.co_2 = tulos[int(kohde) -1][3] * self.co_2_rate
+    #paljonko akussa rangea lennon jälkeen
+        self.akun_varaustaso = int(self.akun_varaustaso) - tulos[int(kohde) -1][3]
+
+        return
+
+    def Ryöstö(self):
+        lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
+        valinta = (f"input haluatko tehdä ryöstön? \n riskisi jäädä kiinni on {self.risk}. Y/N: ")
+        if valinta == "Y":
+            if self.risk >= random.randint(0,100):
+                print("onnistuit ryöstössäsi")
+            else:
+                print("jäit kiinni")
+        elif valinta == "N":
+            print(f"lentokoneen latauksessa kului {lataus_aika} minuuttia")
+
+
         return
 
     def lopeta_peli(self):
@@ -97,8 +117,8 @@ class User:
             print("Komentoa ei tunnistettu")
 
     def tulosta_tiedot(self):
-        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} min \n"
-              f"CO2 päästösi ovat {self.co_2} tonnia \nja rahamäärä on {self.money}")
+        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} tuntia \n"
+              f"CO2 päästösi ovat {self.co_2} tonnia \nrahamäärä on {self.money}")
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
