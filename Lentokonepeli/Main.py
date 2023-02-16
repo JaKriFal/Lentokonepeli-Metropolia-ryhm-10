@@ -18,13 +18,17 @@ class User:
         self.co_2_rate = 0
 
     def lopeta_peli(self):
-        quitornot = input("Lopetetaanko peli? Y/N")
+        quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
             return True
         elif quitornot == "N":
             return False
         else:
             print("Komentoa ei tunnistettu")
+
+    def tulosta_tiedot(self):
+        print(f"Pelaajan nimi on {self.name}, paikka on {self.player_location} ja rahamäärä on {self.money}")
+
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 name = input("Anna pelaajan nimi:")
