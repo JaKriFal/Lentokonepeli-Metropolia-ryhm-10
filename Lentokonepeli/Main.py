@@ -99,12 +99,18 @@ class User:
         if valinta == "Y":
             if self.risk >= random.randint(0,100):
                 print("onnistuit ryöstössäsi")
+                print(f"lentokoneen latauksessa kului {lataus_aika} minuuttia")
+                self.time = self.time + lataus_aika
+                #+raha,
             else:
                 print("jäit kiinni")
+                #-raha
+
         elif valinta == "N":
             print(f"lentokoneen latauksessa kului {lataus_aika} minuuttia")
-
-
+            self.time = self.time + lataus_aika
+        else:
+            print("komentoa ei tunnistettu")
         return
 
     def lopeta_peli(self):
