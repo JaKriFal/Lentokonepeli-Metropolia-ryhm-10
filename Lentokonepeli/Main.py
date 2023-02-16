@@ -7,23 +7,38 @@ vic_con = False
 # Tänne luokka-alustukset (varmaan lähinnä User/Pelaaja)
 
 class User:
-    def __init__(self, name, money, time, player_location, upgrades, risk, co_2):
+    def __init__(self, name):
         self.name = name
-        self.money = money
-        self.time = time
-        self.player_location = player_location
-        self.upgrades = upgrades
-        self.risk = risk
-        self.co_2 = co_2
+        self.money = 0
+        self.time = 0
+        self.player_location = "Helsinki"
+        self.upgrades = 0
+        self.risk = 0
+        self.co_2 = 0
+        self.co_2_rate = 0
 
     def lopeta_peli(self):
-        return 0
+        quitornot = input("Lopetetaanko peli? Y/N")
+        if quitornot == "Y":
+            return True
+        elif quitornot == "N":
+            return False
+        else:
+            print("Komentoa ei tunnistettu")
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
+name = input("Anna pelaajan nimi:")
+
+Pelaaja = User("name")
 
 # Main loop
 while vic_con == False:
-    print("looppi")
+    testi = Pelaaja.lopeta_peli()
+    if testi:
+        vic_con = True
+        print("Peli lopetettu")
+    else:
+        print("Peli jatkuu")
 
 
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
