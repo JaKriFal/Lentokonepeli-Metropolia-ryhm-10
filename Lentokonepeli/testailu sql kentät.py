@@ -1,4 +1,4 @@
-import mysql.connector
+import mariadb
 
 
 nykyinen_lon = "24.957996168"
@@ -19,7 +19,7 @@ def airports():
 
     return tulos
 
-yhteys = mysql.connector.connect(
+yhteys = mariadb.connect(
          host='localhost',
          port= 3306,
          database='flight_game',

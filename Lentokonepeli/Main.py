@@ -35,8 +35,7 @@ class User:
         self.vic_con = False
 
     def Liiku(self):
-
-
+        return 0
 
     def lopeta_peli(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
