@@ -34,6 +34,10 @@ class User:
         self.co_2_rate = 0
         self.vic_con = False
 
+    def Liiku(self):
+
+
+
     def lopeta_peli(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
