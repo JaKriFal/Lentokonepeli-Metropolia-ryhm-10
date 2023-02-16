@@ -52,7 +52,7 @@ class User:
 
     def Lennä(self):
 
-
+    #pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
         sql = "select name, latitude_deg, longitude_deg, "
         sql += "ST_Distance_Sphere( point ('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'),"
         sql += "point(longitude_deg, latitude_deg)) * .001"
@@ -66,6 +66,7 @@ class User:
         kursori.execute(sql)
         tulos = kursori.fetchall()
 
+    #luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
         uusi_tulos = [(item[0], item[-1]) for item in tulos]
 
         table = PrettyTable()
@@ -74,11 +75,14 @@ class User:
             table.add_row([i + 1] + list(row))
         print(table)
 
+    #päivitetään useriin sijainti
         kohde = input("Anna kentän numero mille haluat liikkua: ")
         print(f"olet nyt kentällä {tulos[int(kohde) - 1][0]}")
         self.nykyinen_lon = str(tulos[int(kohde) - 1][2])
         self.nykyinen_lat = str(tulos[int(kohde) - 1][1])
         self.player_location = tulos[int(kohde) - 1][0]
+    #kauanko lennosta kesti
+        self.time = self.time + tulos[int(kohde) -1][3] * 0.5
         return
 
     def lopeta_peli(self):
@@ -91,7 +95,7 @@ class User:
             print("Komentoa ei tunnistettu")
 
     def tulosta_tiedot(self):
-        print(f"Pelaajan nimi on {self.name}, paikka on {self.player_location} ja rahamäärä on {self.money}")
+        print(f"Pelaajan nimi on {self.name}, paikka on {self.player_location}, aikaa kulunut {self.time}min ja rahamäärä on {self.money}")
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
