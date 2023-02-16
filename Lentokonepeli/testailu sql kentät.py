@@ -21,12 +21,12 @@ def airports():
     kursori = yhteys.cursor()
     kursori.execute(sql)
     tulos = kursori.fetchall()
-    print(tulos)
+
 
     uusi_tulos = [(item[0], item[-1]) for item in tulos]
 
     table = PrettyTable()
-    table.field_names = ["#", "Lentokentän nimi", "Etäisyys"]
+    table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM"]
     for i, row in enumerate(uusi_tulos):
         table.add_row([i + 1] + list(row))
 
