@@ -20,28 +20,28 @@ vic_con = False
 
 def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
     print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
-    valinta = input("Anna komento: ")
-    if valinta == "Lennä":
+    choice = input("Anna komento: ")
+    if choice == "Lennä":
         #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
         if int(User.range) > 300:
-            maan_vaihto = input("Valitse haluatko vaihtaa maata. Y/N: ")
-            if maan_vaihto == "Y":
-                User.Maan_vaihto()
-                User.Lennä()
-                User.Ryöstö()
-            elif maan_vaihto == "N":
-                User.Lennä()
-                User.Ryöstö()
+            change_country = input("Valitse haluatko vaihtaa maata. Y/N: ")
+            if change_country == "Y":
+                User.Change_country()
+                User.move()
+                User.Robbery()
+            elif change_country == "N":
+                User.move()
+                User.Robbery()
             else:
                 print("komentoa ei tunnistettu")
         else:
-            User.Lennä()
-            User.Ryöstö()
-    elif valinta == "Tiedot":
+            User.move()
+            User.Robbery()
+    elif choice == "Tiedot":
         User.tulosta_tiedot()
-    elif valinta == "Apua":
+    elif choice == "Apua":
         User.Apua()
-    elif valinta == "Lopeta":
+    elif choice == "Lopeta":
         User.lopeta_peli()
     else:
         print("Komentoa ei tunnistettu")
@@ -52,111 +52,111 @@ class User:
     def __init__(self, name):
         self.name = name
         self.money = 4500000
-        self.raha_kerroin = 15000 #upgrade
+        self.money_factor = 15000 #upgrade
         self.time = 0
-        self.nykyinen_lon = str(24.957996168)
-        self.nykyinen_lat = str(60.316998732)
+        self.current_lon = str(24.957996168)
+        self.current_lat = str(60.316998732)
         self.airport_type = "small_airport" #upgrade
         self.range = str(250) #upgrade
-        self.maa = "FI"
-        self.akun_varaustaso = self.range
-        self.lataus_nopeus = 30 #upgrade
+        self.current_country = "FI"
+        self.battery_charge_status = self.range
+        self.battery_charging_rate = 30 #upgrade
         self.player_location = "helsinki"
         self.upgrades = 0
         self.risk = 0
-        self.risk_kerroin = random.randint(80,120) #upgrade
+        self.risk_factor = random.randint(80, 120) #upgrade
         self.co_2 = 0
         self.co_2_rate = 0.02 #upgrade
-        self.vaikeus_aste = 5000000
+        self.difficulty = 5000000
         self.vic_con = False
 
-    def Lennä(self):
+    def move(self):
         #lista riskeille
-        riskit = []
+        risk_list = []
     #pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
         sql = "select name, latitude_deg, longitude_deg, "
-        sql += "ST_Distance_Sphere( point ('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'),"
+        sql += "ST_Distance_Sphere( point ('" + self.current_lon + "','" + self.current_lat + "'),"
         sql += "point(longitude_deg, latitude_deg)) * .001"
         sql += "as `distance_in_km` from `airport` "
-        sql += "where type = '" + self.airport_type + "'and iso_country = '" + self.maa + "'"
+        sql += "where type = '" + self.airport_type + "'and iso_country = '" + self.current_country + "'"
         sql += " having `distance_in_km` <= '" + self.range + "'"
         sql += "order by `distance_in_km` asc"
 
         # print(sql)
         kursori = yhteys.cursor()
         kursori.execute(sql)
-        tulos = kursori.fetchall()
+        result = kursori.fetchall()
 
     #luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
-        uusi_tulos = [(item[0], round(item[-1])) for item in tulos]
+        user_result = [(item[0], round(item[-1])) for item in result]
         table = PrettyTable()
         table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM", "Riski jäädä kiinni %"]
-        for i, row in enumerate(uusi_tulos):
+        for i, row in enumerate(user_result):
             #lasketaan etäisyyden mukaan riski jokaiselle kentälle jäädä kiinni
-            etäisyys = row[-1]
-            risk = round((etäisyys / self.risk_kerroin) + self.risk, 2)
-            riskit.append(risk)
+            distance = row[-1]
+            risk = round((distance / self.risk_factor) + self.risk, 2)
+            risk_list.append(risk)
             table.add_row([i + 1] + list(row) + [risk])
         print(table)
 
         #kysytään mihin kentälle halutaan
-        kohde = input("Anna kentän numero mille haluat liikkua: ")
-        while not kohde.isnumeric() or not (1 <= int(kohde) <= len(uusi_tulos)):
+        target = input("Anna kentän numero mille haluat liikkua: ")
+        while not target.isnumeric() or not (1 <= int(target) <= len(user_result)):
             print("Virheellinen syöte")
-            kohde = input("Anna kentän numero mille haluat liikkua: ")
-        print(f"olet nyt kentällä {tulos[int(kohde) - 1][0]}")
+            target = input("Anna kentän numero mille haluat liikkua: ")
+        print(f"olet nyt kentällä {result[int(target) - 1][0]}")
 
     #päivitetään oma sijainti
-        self.nykyinen_lon = str(tulos[int(kohde) - 1][2])
-        self.nykyinen_lat = str(tulos[int(kohde) - 1][1])
-        self.player_location = tulos[int(kohde) - 1][0]
+        self.current_lon = str(result[int(target) - 1][2])
+        self.current_lat = str(result[int(target) - 1][1])
+        self.player_location = result[int(target) - 1][0]
     #kauanko lennossa kesti
-        self.time = self.time + tulos[int(kohde) - 1][3] * 0.01
+        self.time = self.time + result[int(target) - 1][3] * 0.01
     #co2 päästöt
-        self.co_2 = self.co_2 + tulos[int(kohde) - 1][3] * self.co_2_rate
+        self.co_2 = self.co_2 + result[int(target) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
-        self.akun_varaustaso = int(self.range) - tulos[int(kohde) - 1][3]
+        self.battery_charge_status = int(self.range) - result[int(target) - 1][3]
     #tallenetaan valitun kentän riski
-        self.risk = riskit[int(kohde)-1]
+        self.risk = risk_list[int(target)-1]
         return
 
-    def Ryöstö(self):
-        valinta = "x"
-        while valinta != "Y" and valinta != "N":
-            lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
-            valinta = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
-            if valinta == "Y":
+    def Robbery(self):
+        choice = "x"
+        while choice != "Y" and choice != "N":
+            charging_time = (int(self.range) - int(self.battery_charge_status)) / int(self.battery_charging_rate)
+            choice = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
+            if choice == "Y":
                 #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
                 if self.risk <= random.randint(0, 100):
                     print("onnistuit ryöstössäsi")
-                    self.money = self.money + self.risk * self.raha_kerroin
-                    print(f"sait ryöstettyä {round(self.risk * self.raha_kerroin)}€")
+                    self.money = self.money + self.risk * self.money_factor
+                    print(f"sait ryöstettyä {round(self.risk * self.money_factor)}€")
                 else:
                     #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
                     print("jäit kiinni")
-                    self.money = self.money - self.risk * self.raha_kerroin * 2
-                    print(f"menetit {round(self.risk * self.raha_kerroin * 2)}€")
+                    self.money = self.money - self.risk * self.money_factor * 2
+                    print(f"menetit {round(self.risk * self.money_factor * 2)}€")
 
-                print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
-                self.time = self.time + lataus_aika
+                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
+                self.time = self.time + charging_time
                 #break
 
-            elif valinta == "N":
+            elif choice == "N":
                 #ei ryöstetä kenttää vaan pelkästään ladataan konetta -> lisätään aikaa
-                print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
-                self.time = self.time + lataus_aika
+                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
+                self.time = self.time + charging_time
                 #break
             else:
                 print("komentoa ei tunnistettu")
         return
 
-    def Maan_vaihto(self):
+    def Change_country(self):
         #haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
         sql = "SELECT iso_country, COUNT(*) AS airport_count "
         sql += "FROM airport "
         sql += "WHERE type = '" + self.airport_type + "' "
-        sql += "AND iso_country != '" + self.maa + "' "
-        sql += "AND ST_Distance_Sphere(point('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'), "
+        sql += "AND iso_country != '" + self.current_country + "' "
+        sql += "AND ST_Distance_Sphere(point('" + self.current_lon + "','" + self.current_lat + "'), "
         sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + str(self.range)
         sql += " GROUP BY iso_country"
 
@@ -165,25 +165,25 @@ class User:
         tulos = kursori.fetchall()
 
         # taulokko maista ja montako kenttää siellä on rangen kantamalla
-        taulukko = PrettyTable()
-        taulukko.field_names = ["Maakoodi", "Kenttien määrä"]
+        table = PrettyTable()
+        table.field_names = ["Maakoodi", "Kenttien määrä"]
         for rivi in tulos:
-            taulukko.add_row([rivi[0], rivi[1]])
-        print(taulukko)
+            table.add_row([rivi[0], rivi[1]])
+        print(table)
         #valitaan maa mihin lennetään
-        maat = [t[0] for t in tulos]
-        maa = ""
-        while maa not in maat:
-            maa = input("anna maakoodi johon haluat matkustaa: ")
-            self.maa = maa
-            if maa not in maat:
+        countries = [t[0] for t in tulos]
+        country = ""
+        while country not in countries:
+            country = input("anna maakoodi johon haluat matkustaa: ")
+            self.current_country = country
+            if country not in countries:
                 print("Virheellinen maakoodi. Anna uusi maakoodi.")
         #nollataan riski
         self.risk = 0
         return
 
     def Apua(self):
-        print(f"pelissä sinun on tarkoitus kerätä rahaa {self.vaikeus_aste}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
+        print(f"pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
               f" valitse menusta Lennä. komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
               f"sekä riskin jäädä kiinni ryöstöstä. \nvalittuasi kenttää vastaavan numeron sinulla on mahdollisuus ryöstää kenttä."
               f"\njos ryöstö onnistui sinä sait ilmoitetun määrän rahaa. jos ryöstö epäonnistui joudut lahjomaan tuomarin ja menetät rahaa")
@@ -211,7 +211,7 @@ Pelaaja = User(name)
 # Main loop
 while Pelaaja.vic_con == False:
     valitsin(Pelaaja)
-    Pelaaja.vic_con = Pelaaja.money >= Pelaaja.vaikeus_aste
+    Pelaaja.vic_con = Pelaaja.money >= Pelaaja.difficulty
 
 
 
