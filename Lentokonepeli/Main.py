@@ -50,12 +50,13 @@ class User:
         self.player_location = "helsinki"
         self.upgrades = 0
         self.risk = 0
+        self.risk_kerroin = random.randint(80,120)
         self.co_2 = 0
         self.co_2_rate = 0.02
         self.vic_con = False
 
     def Lennä(self):
-
+        riskit = []
     #pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
         sql = "select name, latitude_deg, longitude_deg, "
         sql += "ST_Distance_Sphere( point ('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'),"
@@ -72,14 +73,18 @@ class User:
 
     #luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
         uusi_tulos = [(item[0], item[-1]) for item in tulos]
-
         table = PrettyTable()
-        table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM"]
+        table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM", "Riski jäädä kiinni %"]
         for i, row in enumerate(uusi_tulos):
-            table.add_row([i + 1] + list(row))
+            #lasketaan etäisyyden mukaan riski jokaiselle kentälle jäädä kiinni
+            etäisyys = row[-1]
+            risk = round((etäisyys / self.risk_kerroin) + self.risk, 2)
+            riskit.append(risk)
+            table.add_row([i + 1] + list(row) + [risk])
+
         print(table)
 
-    #päivitetään useriin sijainti
+        #päivitetään useriin sijainti. pitää lisätä looppi jos antaa väärän arvon
         kohde = input("Anna kentän numero mille haluat liikkua: ")
         print(f"olet nyt kentällä {tulos[int(kohde) - 1][0]}")
         self.nykyinen_lon = str(tulos[int(kohde) - 1][2])
@@ -88,30 +93,34 @@ class User:
     #kauanko lennossa kesti
         self.time = self.time + tulos[int(kohde) - 1][3] * 0.01
     #co2 päästöt
-        self.co_2 = self.co_2+ tulos[int(kohde) - 1][3] * self.co_2_rate
+        self.co_2 = self.co_2 + tulos[int(kohde) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
         self.akun_varaustaso = int(self.akun_varaustaso) - tulos[int(kohde) - 1][3]
-
+    #tallenetaan valitun kentän riski
+        self.risk = riskit[int(kohde)-1]
         return
 
     def Ryöstö(self):
-        lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
-        valinta = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
-        if valinta == "Y":
-            if self.risk <= random.randint(0,100):
-                print("onnistuit ryöstössäsi")
+        while True:
+            lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
+            valinta = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
+            if valinta == "Y":
+                if self.risk <= random.randint(0, 100):
+                    print("onnistuit ryöstössäsi")
+                    #+raha,
+                else:
+                    print("jäit kiinni")
+                    #-raha
                 print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
                 self.time = self.time + lataus_aika
-                #+raha,
-            else:
-                print("jäit kiinni")
-                #-raha
+                break
 
-        elif valinta == "N":
-            print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
-            self.time = self.time + lataus_aika
-        else:
-            print("komentoa ei tunnistettu")
+            elif valinta == "N":
+                print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
+                self.time = self.time + lataus_aika
+                break
+            else:
+                print("komentoa ei tunnistettu")
         return
 
     def lopeta_peli(self):
