@@ -19,7 +19,6 @@ vic_con = False
 # Tänne funktiot
 
 def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
-
     print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
     valinta = input("Anna komento: ")
     if valinta == "Lennä":
@@ -55,7 +54,8 @@ class User:
         self.risk_kerroin = random.randint(80,120) #upgrade
         self.co_2 = 0
         self.co_2_rate = 0.02 #upgrade
-        self.vic_con = self.money >= 5000000
+        self.vaikeus_aste = 5000000
+        self.vic_con = False
 
     def Lennä(self):
         #lista riskeille
@@ -151,12 +151,13 @@ Pelaaja = User(name)
 # Main loop
 while Pelaaja.vic_con == False:
     valitsin(Pelaaja)
+    Pelaaja.vic_con = Pelaaja.money >= Pelaaja.vaikeus_aste
 
 
 
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
 print("voiti pelin. sinun tuloksesi ovat:")
-print(Pelaaja.money)
-print(Pelaaja.co_2)
-print(Pelaaja.time)
+print(f"ryöstit {round(Pelaaja.money)}€")
+print(f"sinun co2 jälkesi oli {round(Pelaaja.co_2)} tonnia")
+print(f"sinun aikasi oli {round(Pelaaja.time)} tuntia")
 
