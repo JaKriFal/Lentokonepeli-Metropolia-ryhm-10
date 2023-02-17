@@ -19,6 +19,7 @@ vic_con = False
 # Tänne funktiot
 
 def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
+
     print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
     valinta = input("Anna komento: ")
     if valinta == "Lennä":
@@ -38,8 +39,8 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
 class User:
     def __init__(self, name):
         self.name = name
-        self.money = 0
-        self.raha_kerroin = 0 #upgrade
+        self.money = 4990000
+        self.raha_kerroin = 15000 #upgrade
         self.time = 0
         self.nykyinen_lon = str(24.957996168)
         self.nykyinen_lat = str(60.316998732)
@@ -54,9 +55,10 @@ class User:
         self.risk_kerroin = random.randint(80,120) #upgrade
         self.co_2 = 0
         self.co_2_rate = 0.02 #upgrade
-        self.vic_con = False
+        self.vic_con = self.money >= 5000000
 
     def Lennä(self):
+        #lista riskeille
         riskit = []
     #pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
         sql = "select name, latitude_deg, longitude_deg, "
@@ -108,10 +110,13 @@ class User:
             if valinta == "Y":
                 if self.risk <= random.randint(0, 100):
                     print("onnistuit ryöstössäsi")
-                    #+raha,
+                    self.money = self.money + self.risk * self.raha_kerroin
+                    print(f"sait ryöstettyä {round(self.risk * self.raha_kerroin)}€")
                 else:
                     print("jäit kiinni")
-                    #-raha
+                    self.money = self.money - self.risk * self.raha_kerroin * 2
+                    print(f"menetit {round(self.risk * self.raha_kerroin * 2)}€")
+
                 print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
                 self.time = self.time + lataus_aika
                 break
@@ -135,7 +140,7 @@ class User:
 
     def tulosta_tiedot(self):
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} tuntia \n"
-              f"CO2 päästösi ovat {self.co_2} tonnia \nrahamäärä on {self.money}")
+              f"CO2 päästösi ovat {self.co_2} tonnia \nrahamäärä on {round(self.money)}€")
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
@@ -148,6 +153,10 @@ while Pelaaja.vic_con == False:
     valitsin(Pelaaja)
 
 
-#Tänne toiminnot jotka ajetaan kun pelikerta päättyy
 
+#Tänne toiminnot jotka ajetaan kun pelikerta päättyy
+print("voiti pelin. sinun tuloksesi ovat:")
+print(Pelaaja.money)
+print(Pelaaja.co_2)
+print(Pelaaja.time)
 
