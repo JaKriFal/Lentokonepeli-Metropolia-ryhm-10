@@ -108,11 +108,13 @@ class User:
             lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
             valinta = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if valinta == "Y":
+                #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
                 if self.risk <= random.randint(0, 100):
                     print("onnistuit ryöstössäsi")
                     self.money = self.money + self.risk * self.raha_kerroin
                     print(f"sait ryöstettyä {round(self.risk * self.raha_kerroin)}€")
                 else:
+                    #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
                     print("jäit kiinni")
                     self.money = self.money - self.risk * self.raha_kerroin * 2
                     print(f"menetit {round(self.risk * self.raha_kerroin * 2)}€")
@@ -122,6 +124,7 @@ class User:
                 break
 
             elif valinta == "N":
+                #ei ryöstetä kenttää vaan pelkästään ladataan konetta -> lisätään aikaa
                 print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
                 self.time = self.time + lataus_aika
                 break
