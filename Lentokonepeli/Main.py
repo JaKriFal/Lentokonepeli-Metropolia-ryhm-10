@@ -38,7 +38,7 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
 class User:
     def __init__(self, name):
         self.name = name
-        self.money = 4990000
+        self.money = 4500000
         self.raha_kerroin = 15000 #upgrade
         self.time = 0
         self.nykyinen_lon = str(24.957996168)
