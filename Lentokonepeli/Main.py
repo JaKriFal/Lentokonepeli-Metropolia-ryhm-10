@@ -22,8 +22,16 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
     print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
     valinta = input("Anna komento: ")
     if valinta == "Lennä":
-        User.Lennä()
-        User.Ryöstö()
+        maan_vaihto = input("Valitse haluatko vaihtaa maata. Y/N: ")
+        if maan_vaihto == "Y":
+            User.Maan_vaihto()
+            User.Lennä()
+            User.Ryöstö()
+        elif maan_vaihto == "N":
+            User.Lennä()
+            User.Ryöstö()
+        else:
+            print("komentoa ei tunnistettu")
     elif valinta == "Tiedot":
         User.tulosta_tiedot()
     elif valinta == "Apua":
@@ -130,6 +138,24 @@ class User:
                 break
             else:
                 print("komentoa ei tunnistettu")
+        return
+
+    def Maan_vaihto(self):
+        #haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
+        sql = "SELECT DISTINCT iso_country "
+        sql += "FROM airport "
+        sql += "WHERE type = '" + self.airport_type + "' "
+        sql += "AND ST_Distance_Sphere(point('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'), "
+        sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + str(self.range)
+
+        # print(sql)
+        kursori = yhteys.cursor()
+        kursori.execute(sql)
+        tulos = kursori.fetchall()
+        print(tulos)
+        #kysytään maa mihin halutaan lentää ja nollataan riski
+        self.maa = input("anna maakoodi johon haluat matkustaa:")
+        self.risk = 0
         return
 
     def lopeta_peli(self):
