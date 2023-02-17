@@ -92,12 +92,16 @@ class User:
             risk = round((etäisyys / self.risk_kerroin) + self.risk, 2)
             riskit.append(risk)
             table.add_row([i + 1] + list(row) + [risk])
-
         print(table)
 
-        #päivitetään useriin sijainti. pitää lisätä looppi jos antaa väärän arvon
+        #kysytään mihin kentälle halutaan
         kohde = input("Anna kentän numero mille haluat liikkua: ")
+        while not kohde.isnumeric() or not (1 <= int(kohde) <= len(uusi_tulos)):
+            print("Virheellinen syöte")
+            kohde = input("Anna kentän numero mille haluat liikkua: ")
         print(f"olet nyt kentällä {tulos[int(kohde) - 1][0]}")
+
+    #päivitetään oma sijainti
         self.nykyinen_lon = str(tulos[int(kohde) - 1][2])
         self.nykyinen_lat = str(tulos[int(kohde) - 1][1])
         self.player_location = tulos[int(kohde) - 1][0]
@@ -112,7 +116,8 @@ class User:
         return
 
     def Ryöstö(self):
-        while True:
+        valinta = "x"
+        while valinta != "Y" and valinta != "N":
             lataus_aika = (int(self.range) - int(self.akun_varaustaso)) / int(self.lataus_nopeus)
             valinta = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if valinta == "Y":
@@ -129,32 +134,46 @@ class User:
 
                 print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
                 self.time = self.time + lataus_aika
-                break
+                #break
 
             elif valinta == "N":
                 #ei ryöstetä kenttää vaan pelkästään ladataan konetta -> lisätään aikaa
                 print(f"lentokoneen latauksessa kului {lataus_aika} tuntia")
                 self.time = self.time + lataus_aika
-                break
+                #break
             else:
                 print("komentoa ei tunnistettu")
         return
 
     def Maan_vaihto(self):
         #haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
-        sql = "SELECT DISTINCT iso_country "
+        sql = "SELECT iso_country, COUNT(*) AS airport_count "
         sql += "FROM airport "
         sql += "WHERE type = '" + self.airport_type + "' "
+        sql += "AND iso_country != '" + self.maa + "' "
         sql += "AND ST_Distance_Sphere(point('" + self.nykyinen_lon + "','" + self.nykyinen_lat + "'), "
         sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + str(self.range)
+        sql += " GROUP BY iso_country"
 
-        # print(sql)
         kursori = yhteys.cursor()
         kursori.execute(sql)
         tulos = kursori.fetchall()
-        print(tulos)
-        #kysytään maa mihin halutaan lentää ja nollataan riski
-        self.maa = input("anna maakoodi johon haluat matkustaa:")
+
+        # taulokko maista ja montako kenttää siellä on rangen kantamalla
+        taulukko = PrettyTable()
+        taulukko.field_names = ["Maakoodi", "Kenttien määrä"]
+        for rivi in tulos:
+            taulukko.add_row([rivi[0], rivi[1]])
+        print(taulukko)
+        #valitaan maa mihin lennetään
+        maat = [t[0] for t in tulos]
+        maa = ""
+        while maa not in maat:
+            maa = input("anna maakoodi johon haluat matkustaa: ")
+            self.maa = maa
+            if maa not in maat:
+                print("Virheellinen maakoodi. Anna uusi maakoodi.")
+        #nollataan riski
         self.risk = 0
         return
 
