@@ -39,20 +39,21 @@ class User:
     def __init__(self, name):
         self.name = name
         self.money = 0
+        self.raha_kerroin = 0 #upgrade
         self.time = 0
         self.nykyinen_lon = str(24.957996168)
         self.nykyinen_lat = str(60.316998732)
-        self.airport_type = "medium_airport"
-        self.range = str(250)
+        self.airport_type = "medium_airport" #upgrade
+        self.range = str(250) #upgrade
         self.maa = "FI"
         self.akun_varaustaso = self.range
-        self.lataus_nopeus = 30
+        self.lataus_nopeus = 30 #upgrade
         self.player_location = "helsinki"
         self.upgrades = 0
         self.risk = 0
-        self.risk_kerroin = random.randint(80,120)
+        self.risk_kerroin = random.randint(80,120) #upgrade
         self.co_2 = 0
-        self.co_2_rate = 0.02
+        self.co_2_rate = 0.02 #upgrade
         self.vic_con = False
 
     def Lennä(self):
@@ -72,7 +73,7 @@ class User:
         tulos = kursori.fetchall()
 
     #luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
-        uusi_tulos = [(item[0], item[-1]) for item in tulos]
+        uusi_tulos = [(item[0], round(item[-1])) for item in tulos]
         table = PrettyTable()
         table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM", "Riski jäädä kiinni %"]
         for i, row in enumerate(uusi_tulos):
@@ -95,7 +96,7 @@ class User:
     #co2 päästöt
         self.co_2 = self.co_2 + tulos[int(kohde) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
-        self.akun_varaustaso = int(self.akun_varaustaso) - tulos[int(kohde) - 1][3]
+        self.akun_varaustaso = int(self.range) - tulos[int(kohde) - 1][3]
     #tallenetaan valitun kentän riski
         self.risk = riskit[int(kohde)-1]
         return
