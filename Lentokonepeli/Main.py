@@ -22,20 +22,25 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
     print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
     valinta = input("Anna komento: ")
     if valinta == "Lennä":
-        maan_vaihto = input("Valitse haluatko vaihtaa maata. Y/N: ")
-        if maan_vaihto == "Y":
-            User.Maan_vaihto()
-            User.Lennä()
-            User.Ryöstö()
-        elif maan_vaihto == "N":
-            User.Lennä()
-            User.Ryöstö()
+        #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
+        if int(User.range) > 300:
+            maan_vaihto = input("Valitse haluatko vaihtaa maata. Y/N: ")
+            if maan_vaihto == "Y":
+                User.Maan_vaihto()
+                User.Lennä()
+                User.Ryöstö()
+            elif maan_vaihto == "N":
+                User.Lennä()
+                User.Ryöstö()
+            else:
+                print("komentoa ei tunnistettu")
         else:
-            print("komentoa ei tunnistettu")
+            User.Lennä()
+            User.Ryöstö()
     elif valinta == "Tiedot":
         User.tulosta_tiedot()
     elif valinta == "Apua":
-        print("APUVA!!!")
+        User.Apua()
     elif valinta == "Lopeta":
         User.lopeta_peli()
     else:
@@ -51,7 +56,7 @@ class User:
         self.time = 0
         self.nykyinen_lon = str(24.957996168)
         self.nykyinen_lat = str(60.316998732)
-        self.airport_type = "medium_airport" #upgrade
+        self.airport_type = "small_airport" #upgrade
         self.range = str(250) #upgrade
         self.maa = "FI"
         self.akun_varaustaso = self.range
@@ -175,6 +180,13 @@ class User:
                 print("Virheellinen maakoodi. Anna uusi maakoodi.")
         #nollataan riski
         self.risk = 0
+        return
+
+    def Apua(self):
+        print(f"pelissä sinun on tarkoitus kerätä rahaa {self.vaikeus_aste}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
+              f" valitse menusta Lennä. komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
+              f"sekä riskin jäädä kiinni ryöstöstä. \nvalittuasi kenttää vastaavan numeron sinulla on mahdollisuus ryöstää kenttä."
+              f"\njos ryöstö onnistui sinä sait ilmoitetun määrän rahaa. jos ryöstö epäonnistui joudut lahjomaan tuomarin ja menetät rahaa")
         return
 
     def lopeta_peli(self):
