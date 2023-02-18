@@ -12,14 +12,13 @@ yhteys = mariadb.connect(
          password='password1',
          autocommit=True
          )
-yhteys.autocommit = True
-kursori = yhteys.cursor()
+
 # Tänne globaalien muuttujien alustaminen
 vic_con = False
 
 # Tänne funktiot
 
-def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
+def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
     print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
@@ -44,11 +43,11 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
     elif choice == "Kauppa":
         print("voit ostaa lentokoneen päivityksiä")
     elif choice == "Tiedot":
-        User.tulosta_tiedot()
+        User.get_info()
     elif choice == "Apua":
-        User.Apua()
+        User.help()
     elif choice == "Lopeta":
-        User.lopeta_peli()
+        User.end_game()
     else:
         print("Komentoa ei tunnistettu")
 
@@ -57,7 +56,6 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
 class User:
     def __init__(self, name):
         self.name = name
-        self.score = 0
         self.money = 4500000
         self.money_factor = random.randint(12000, 17000) #upgrade
         self.time = 0
@@ -145,7 +143,7 @@ class User:
                     #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
                     print("jäit kiinni")
                     self.money = self.money - self.risk * self.money_factor * 2
-                    print(f"sinun pitää lahjoa viranomaiset. menetit {round(self.risk * self.money_factor * 2)}€")
+                    print(f"menetit {round(self.risk * self.money_factor * 2)}€")
 
             elif choice == "N":
                 return
@@ -201,14 +199,14 @@ class User:
         self.risk = 0
         return
 
-    def Apua(self):
+    def help(self):
         print(f"pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
               f" valitse menusta Lennä. komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
               f"sekä riskin jäädä kiinni ryöstöstä. \nvalittuasi kenttää vastaavan numeron sinulla on mahdollisuus ryöstää kenttä."
               f"\njos ryöstö onnistui sinä sait ilmoitetun määrän rahaa. jos ryöstö epäonnistui joudut lahjomaan tuomarin ja menetät rahaa")
         return
 
-    def lopeta_peli(self):
+    def end_game(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
             self.vic_con = True
@@ -217,49 +215,30 @@ class User:
         else:
             print("Komentoa ei tunnistettu")
 
-    def tulosta_tiedot(self):
+    def get_info(self):
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
               f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
 
-
-#Pelin tietokanta jutut mm highscore
-#luodaan tietokantaan highscore taulukko missä on id, nimi, highscore
-
-"""sql = "CREATE TABLE highscores ("
-sql += "id INT PRIMARY KEY AUTO_INCREMENT,"
-sql += "player_name VARCHAR(255),"
-sql += "score INT)"
-kursori.execute(sql)"""
-
-
-
-
+    #lentokoneen päivitysfunktio
+    def plane_upgrade(self):
+        return 0
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 name = input("Anna pelaajan nimi: ")
 
-Pelaaja = User(name)
+Player = User(name)
 
 # Main loop
-while Pelaaja.vic_con == False:
-    valitsin(Pelaaja)
-    Pelaaja.vic_con = Pelaaja.money >= Pelaaja.difficulty
+while Player.vic_con == False:
+    event_selector(Player)
+    Player.vic_con = Player.money >= Player.difficulty
 
 
 
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
-print("voiti pelin. sinun tuloksesi ovat:")
-print(f"ryöstit {round(Pelaaja.money)}€")
-print(f"sinun co2 jälkesi oli {round(Pelaaja.co_2)} tonnia")
-print(f"sinun aikasi oli {round(Pelaaja.time)} tuntia")
+print("Voitit pelin. sinun tuloksesi ovat:")
+print(f"ryöstit {round(Player.money)}€")
+print(f"sinun co2 jälkesi oli {round(Player.co_2)} tonnia")
+print(f"sinun aikasi oli {round(Player.time)} tuntia")
 
-"""kursori = yhteys.cursor()
-kursori.execute("INSERT INTO highscores (player_name, score) VALUES ('" + name + "', " + str(Pelaaja.score) + ")")
-yhteys.commit()
-
-kursori = yhteys.cursor()
-kursori.execute("SELECT player_name, score FROM highscores ORDER BY score DESC LIMIT 5")
-rows = kursori.fetchall()
-for row in rows:
-    print(row)"""
