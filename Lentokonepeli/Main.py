@@ -219,6 +219,10 @@ class User:
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
               f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
 
+    #lentokoneen päivitysfunktio
+    def plane_upgrade(self):
+        return 0
+
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 name = input("Anna pelaajan nimi: ")
