@@ -12,7 +12,8 @@ yhteys = mariadb.connect(
          password='password1',
          autocommit=True
          )
-
+yhteys.autocommit = True
+kursori = yhteys.cursor()
 # Tänne globaalien muuttujien alustaminen
 vic_con = False
 
@@ -56,6 +57,7 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
 class User:
     def __init__(self, name):
         self.name = name
+        self.score = 0
         self.money = 4500000
         self.money_factor = random.randint(12000, 17000) #upgrade
         self.time = 0
@@ -143,7 +145,7 @@ class User:
                     #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
                     print("jäit kiinni")
                     self.money = self.money - self.risk * self.money_factor * 2
-                    print(f"menetit {round(self.risk * self.money_factor * 2)}€")
+                    print(f"sinun pitää lahjoa viranomaiset. menetit {round(self.risk * self.money_factor * 2)}€")
 
             elif choice == "N":
                 return
@@ -219,6 +221,20 @@ class User:
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
               f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
 
+
+#Pelin tietokanta jutut mm highscore
+#luodaan tietokantaan highscore taulukko missä on id, nimi, highscore
+
+"""sql = "CREATE TABLE highscores ("
+sql += "id INT PRIMARY KEY AUTO_INCREMENT,"
+sql += "player_name VARCHAR(255),"
+sql += "score INT)"
+kursori.execute(sql)"""
+
+
+
+
+
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 name = input("Anna pelaajan nimi: ")
@@ -238,3 +254,12 @@ print(f"ryöstit {round(Pelaaja.money)}€")
 print(f"sinun co2 jälkesi oli {round(Pelaaja.co_2)} tonnia")
 print(f"sinun aikasi oli {round(Pelaaja.time)} tuntia")
 
+"""kursori = yhteys.cursor()
+kursori.execute("INSERT INTO highscores (player_name, score) VALUES ('" + name + "', " + str(Pelaaja.score) + ")")
+yhteys.commit()
+
+kursori = yhteys.cursor()
+kursori.execute("SELECT player_name, score FROM highscores ORDER BY score DESC LIMIT 5")
+rows = kursori.fetchall()
+for row in rows:
+    print(row)"""
