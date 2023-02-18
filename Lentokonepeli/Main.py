@@ -19,7 +19,7 @@ vic_con = False
 # Tänne funktiot
 
 def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
-    print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
+    print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
         #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
@@ -40,6 +40,8 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
             User.move()
             User.Charging()
             User.Robbery()
+    elif choice == "Kauppa":
+        print("voit ostaa lentokoneen päivityksiä")
     elif choice == "Tiedot":
         User.tulosta_tiedot()
     elif choice == "Apua":
@@ -55,7 +57,7 @@ class User:
     def __init__(self, name):
         self.name = name
         self.money = 4500000
-        self.money_factor = 15000 #upgrade
+        self.money_factor = random.randint(12000, 17000) #upgrade
         self.time = 0
         self.current_lon = str(24.957996168)
         self.current_lat = str(60.316998732)
@@ -83,7 +85,7 @@ class User:
         sql += "point(longitude_deg, latitude_deg)) * .001"
         sql += "as `distance_in_km` from `airport` "
         sql += "where type = '" + self.airport_type + "'and iso_country = '" + self.current_country + "'"
-        sql += " having `distance_in_km` <= '" + self.range + "'"
+        sql += " having `distance_in_km` <= '" + str(self.battery_charge_level) + "'"
         sql += "order by `distance_in_km` asc"
 
         # print(sql)
@@ -158,6 +160,7 @@ class User:
             if choice == "Y":
                 print(f"lentokoneen akku on nyt täynnä. latauksessa kesti {round(charging_time)}")
                 self.time = self.time + charging_time
+                self.battery_charge_level = self.range
             elif choice == "N":
                 return
             else:
@@ -213,12 +216,12 @@ class User:
             print("Komentoa ei tunnistettu")
 
     def tulosta_tiedot(self):
-        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} tuntia \n"
-              f"CO2 päästösi ovat {self.co_2} tonnia \nrahamäärä on {round(self.money)}€")
+        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
+              f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
-name = input("Anna pelaajan nimi:")
+name = input("Anna pelaajan nimi: ")
 
 Pelaaja = User(name)
 
