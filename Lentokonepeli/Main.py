@@ -28,14 +28,17 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
             if change_country == "Y":
                 User.Change_country()
                 User.move()
+                User.Charging()
                 User.Robbery()
             elif change_country == "N":
                 User.move()
+                User.Charging()
                 User.Robbery()
             else:
                 print("komentoa ei tunnistettu")
         else:
             User.move()
+            User.Charging()
             User.Robbery()
     elif choice == "Tiedot":
         User.tulosta_tiedot()
@@ -59,7 +62,7 @@ class User:
         self.airport_type = "small_airport" #upgrade
         self.range = str(250) #upgrade
         self.current_country = "FI"
-        self.battery_charge_status = self.range
+        self.battery_charge_level = self.range
         self.battery_charging_rate = 30 #upgrade
         self.player_location = "helsinki"
         self.upgrades = 0
@@ -67,6 +70,7 @@ class User:
         self.risk_factor = random.randint(80, 120) #upgrade
         self.co_2 = 0
         self.co_2_rate = 0.02 #upgrade
+        self.flight_speed = 0.01 #upgrade
         self.difficulty = 5000000
         self.vic_con = False
 
@@ -104,7 +108,9 @@ class User:
         while not target.isnumeric() or not (1 <= int(target) <= len(user_result)):
             print("Virheellinen syöte")
             target = input("Anna kentän numero mille haluat liikkua: ")
+        print(f"lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
         print(f"olet nyt kentällä {result[int(target) - 1][0]}")
+
 
     #päivitetään oma sijainti
         self.current_lon = str(result[int(target) - 1][2])
@@ -115,7 +121,7 @@ class User:
     #co2 päästöt
         self.co_2 = self.co_2 + result[int(target) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
-        self.battery_charge_status = int(self.range) - result[int(target) - 1][3]
+        self.battery_charge_level = int(self.range) - result[int(target) - 1][3]
     #tallenetaan valitun kentän riski
         self.risk = risk_list[int(target)-1]
         return
@@ -123,7 +129,7 @@ class User:
     def Robbery(self):
         choice = "x"
         while choice != "Y" and choice != "N":
-            charging_time = (int(self.range) - int(self.battery_charge_status)) / int(self.battery_charging_rate)
+            #charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
             choice = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if choice == "Y":
                 #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
@@ -137,15 +143,23 @@ class User:
                     self.money = self.money - self.risk * self.money_factor * 2
                     print(f"menetit {round(self.risk * self.money_factor * 2)}€")
 
-                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
-                self.time = self.time + charging_time
-                #break
-
             elif choice == "N":
-                #ei ryöstetä kenttää vaan pelkästään ladataan konetta -> lisätään aikaa
-                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
+                return
+            else:
+                print("komentoa ei tunnistettu")
+        return
+
+    def Charging(self):
+        choice = ""
+        while choice != "Y" and choice != "N":
+            charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
+            choice = input(f"haluatko ladatta lentokonettasi. sinulla on {round(int(self.battery_charge_level))} KM akkua jäljellä. \n"
+                           f"akun täyteen lataaminen kestäisi {round(charging_time)} tuntia. Y/N: ")
+            if choice == "Y":
+                print(f"lentokoneen akku on nyt täynnä. latauksessa kesti {round(charging_time)}")
                 self.time = self.time + charging_time
-                #break
+            elif choice == "N":
+                return
             else:
                 print("komentoa ei tunnistettu")
         return
