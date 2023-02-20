@@ -2,25 +2,24 @@ easy = 5000000
 medium = 75000000
 hard = 10000000
 
-difficulty = input("Select a difficulty level: (Easy, medium or hard) ")
+difficulty = input("Valitse vaikeustaso: Helppo(h), keskitaso(k) vai vaikea(v)?")
 
-if difficulty == "easy":
+if difficulty == "h":
     score_requirement = easy
-elif difficulty == "medium":
+elif difficulty == "k":
     score_requirement = medium
-elif difficulty == "hard":
+elif difficulty == "v":
     score_requirement = hard
 else:
-    print("Invalid difficulty level entered.")
+    print("Virheellinen syöte, kokeile uudelleen.")
     exit()
 
-print(f"The score requirement for {difficulty} difficulty is {score_requirement}.")
 
 
 scoreboard = {}
 
 final_score=score_requirement
-name = input("Enter player's name: ")
+name = input("Syötä pelaajan nimi: ")
 score = int(final_score)
 scoreboard[name] = score
 
