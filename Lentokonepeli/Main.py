@@ -18,8 +18,8 @@ vic_con = False
 
 # Tänne funktiot
 
-def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
-    print("Valitse komento: \n Lennä \n Tiedot \n Apua \n Lopeta")
+def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
+    print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
         #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
@@ -28,21 +28,26 @@ def valitsin(User): #nää on ihan placeholdereita vielä, tehdään kaikille to
             if change_country == "Y":
                 User.Change_country()
                 User.move()
+                User.Charging()
                 User.Robbery()
             elif change_country == "N":
                 User.move()
+                User.Charging()
                 User.Robbery()
             else:
                 print("komentoa ei tunnistettu")
         else:
             User.move()
+            User.Charging()
             User.Robbery()
+    elif choice == "Kauppa":
+        print("voit ostaa lentokoneen päivityksiä")
     elif choice == "Tiedot":
-        User.tulosta_tiedot()
+        User.get_info()
     elif choice == "Apua":
-        User.Apua()
+        User.help()
     elif choice == "Lopeta":
-        User.lopeta_peli()
+        User.end_game()
     else:
         print("Komentoa ei tunnistettu")
 
@@ -52,14 +57,14 @@ class User:
     def __init__(self, name):
         self.name = name
         self.money = 4500000
-        self.money_factor = 15000 #upgrade
+        self.money_factor = random.randint(12000, 17000) #upgrade
         self.time = 0
         self.current_lon = str(24.957996168)
         self.current_lat = str(60.316998732)
         self.airport_type = "small_airport" #upgrade
         self.range = str(250) #upgrade
         self.current_country = "FI"
-        self.battery_charge_status = self.range
+        self.battery_charge_level = self.range
         self.battery_charging_rate = 30 #upgrade
         self.player_location = "helsinki"
         self.upgrades = 0
@@ -67,6 +72,7 @@ class User:
         self.risk_factor = random.randint(80, 120) #upgrade
         self.co_2 = 0
         self.co_2_rate = 0.02 #upgrade
+        self.flight_speed = 0.01 #upgrade
         self.difficulty = 5000000
         self.vic_con = False
 
@@ -79,7 +85,7 @@ class User:
         sql += "point(longitude_deg, latitude_deg)) * .001"
         sql += "as `distance_in_km` from `airport` "
         sql += "where type = '" + self.airport_type + "'and iso_country = '" + self.current_country + "'"
-        sql += " having `distance_in_km` <= '" + self.range + "'"
+        sql += " having `distance_in_km` <= '" + str(self.battery_charge_level) + "'"
         sql += "order by `distance_in_km` asc"
 
         # print(sql)
@@ -104,7 +110,9 @@ class User:
         while not target.isnumeric() or not (1 <= int(target) <= len(user_result)):
             print("Virheellinen syöte")
             target = input("Anna kentän numero mille haluat liikkua: ")
+        print(f"lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
         print(f"olet nyt kentällä {result[int(target) - 1][0]}")
+
 
     #päivitetään oma sijainti
         self.current_lon = str(result[int(target) - 1][2])
@@ -115,7 +123,7 @@ class User:
     #co2 päästöt
         self.co_2 = self.co_2 + result[int(target) - 1][3] * self.co_2_rate
     #paljonko akussa rangea lennon jälkeen
-        self.battery_charge_status = int(self.range) - result[int(target) - 1][3]
+        self.battery_charge_level = int(self.range) - result[int(target) - 1][3]
     #tallenetaan valitun kentän riski
         self.risk = risk_list[int(target)-1]
         return
@@ -123,7 +131,7 @@ class User:
     def Robbery(self):
         choice = "x"
         while choice != "Y" and choice != "N":
-            charging_time = (int(self.range) - int(self.battery_charge_status)) / int(self.battery_charging_rate)
+            #charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
             choice = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if choice == "Y":
                 #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
@@ -137,15 +145,24 @@ class User:
                     self.money = self.money - self.risk * self.money_factor * 2
                     print(f"menetit {round(self.risk * self.money_factor * 2)}€")
 
-                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
-                self.time = self.time + charging_time
-                #break
-
             elif choice == "N":
-                #ei ryöstetä kenttää vaan pelkästään ladataan konetta -> lisätään aikaa
-                print(f"lentokoneen latauksessa kului {charging_time} tuntia")
+                return
+            else:
+                print("komentoa ei tunnistettu")
+        return
+
+    def Charging(self):
+        choice = ""
+        while choice != "Y" and choice != "N":
+            charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
+            choice = input(f"haluatko ladatta lentokonettasi. sinulla on {round(int(self.battery_charge_level))} KM akkua jäljellä. \n"
+                           f"akun täyteen lataaminen kestäisi {round(charging_time)} tuntia. Y/N: ")
+            if choice == "Y":
+                print(f"lentokoneen akku on nyt täynnä. latauksessa kesti {round(charging_time)}")
                 self.time = self.time + charging_time
-                #break
+                self.battery_charge_level = self.range
+            elif choice == "N":
+                return
             else:
                 print("komentoa ei tunnistettu")
         return
@@ -182,14 +199,14 @@ class User:
         self.risk = 0
         return
 
-    def Apua(self):
+    def help(self):
         print(f"pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
               f" valitse menusta Lennä. komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
               f"sekä riskin jäädä kiinni ryöstöstä. \nvalittuasi kenttää vastaavan numeron sinulla on mahdollisuus ryöstää kenttä."
               f"\njos ryöstö onnistui sinä sait ilmoitetun määrän rahaa. jos ryöstö epäonnistui joudut lahjomaan tuomarin ja menetät rahaa")
         return
 
-    def lopeta_peli(self):
+    def end_game(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
             self.vic_con = True
@@ -198,26 +215,30 @@ class User:
         else:
             print("Komentoa ei tunnistettu")
 
-    def tulosta_tiedot(self):
-        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {self.time} tuntia \n"
-              f"CO2 päästösi ovat {self.co_2} tonnia \nrahamäärä on {round(self.money)}€")
+    def get_info(self):
+        print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
+              f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
+
+    #lentokoneen päivitysfunktio
+    def plane_upgrade(self):
+        return 0
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
-name = input("Anna pelaajan nimi:")
+name = input("Anna pelaajan nimi: ")
 
-Pelaaja = User(name)
+Player = User(name)
 
 # Main loop
-while Pelaaja.vic_con == False:
-    valitsin(Pelaaja)
-    Pelaaja.vic_con = Pelaaja.money >= Pelaaja.difficulty
+while Player.vic_con == False:
+    event_selector(Player)
+    Player.vic_con = Player.money >= Player.difficulty
 
 
 
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
-print("voiti pelin. sinun tuloksesi ovat:")
-print(f"ryöstit {round(Pelaaja.money)}€")
-print(f"sinun co2 jälkesi oli {round(Pelaaja.co_2)} tonnia")
-print(f"sinun aikasi oli {round(Pelaaja.time)} tuntia")
+print("Voitit pelin. sinun tuloksesi ovat:")
+print(f"ryöstit {round(Player.money)}€")
+print(f"sinun co2 jälkesi oli {round(Player.co_2)} tonnia")
+print(f"sinun aikasi oli {round(Player.time)} tuntia")
 
