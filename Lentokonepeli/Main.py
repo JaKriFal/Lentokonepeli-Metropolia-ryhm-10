@@ -224,13 +224,45 @@ class User:
 
     #lentokoneen päivitysfunktio
     def plane_upgrade(self):
-        print("Saatavilla olevat päivitykset:")
-        for x in self.upgrades:
+        print("Saatavilla olevat päivitykset:") #tarkistaa sanakirjasta mitä päivityksiä saatavilla
+        for x in self.upgrades: #looppi printtaa päivitykset
             if self.upgrades[x] == False:
                 print(x)
         selected_upgrade = input("Anna haluamasi päivitys tai 'Peruuta' peruuttaaksesi päivityksen: ")
-        print(selected_upgrade + " valittu!")
-        return 0
+        if selected_upgrade == 'Peruuta':
+            print("Päivitys peruutettu")
+        elif selected_upgrade == "money_factor":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.money_factor = self.money_factor + 0
+        elif selected_upgrade == "airport_type":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.airport_type = self.airport_type + ""
+        elif selected_upgrade == "range":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.range = "300"
+        elif selected_upgrade == "battery_charging_rate":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.battery_charging_rate = self.battery_charging_rate + 0
+        elif selected_upgrade == "risk_factor":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.risk_factor = self.risk_factor + 0
+        elif selected_upgrade == "co_2_rate":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.co_2_rate = self.co_2_rate + 0
+        elif selected_upgrade == "flight_speed":
+            print(selected_upgrade + " valittu!")
+            self.upgrades[selected_upgrade] = True
+            self.flight_speed = self.flight_speed + 0
+        else:
+            print("Komentoa ei tunnistettu, palataan toimintavalikkoon.")
+        return
+
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
