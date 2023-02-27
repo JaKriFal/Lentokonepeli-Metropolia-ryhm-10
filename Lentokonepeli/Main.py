@@ -19,7 +19,7 @@ vic_con = False
 # Tänne funktiot
 
 def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
-    print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Apua \n Lopeta")
+    print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Päivitä \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
         #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
@@ -44,6 +44,8 @@ def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaiki
         print("voit ostaa lentokoneen päivityksiä")
     elif choice == "Tiedot":
         User.get_info()
+    elif choice == "Päivitä":
+        User.plane_upgrade()
     elif choice == "Apua":
         User.help()
     elif choice == "Lopeta":
@@ -67,7 +69,8 @@ class User:
         self.battery_charge_level = self.range
         self.battery_charging_rate = 30 #upgrade montako kilsaa tulee tunnissa rangea
         self.player_location = "helsinki"
-        self.upgrades = 0
+        self.upgrades = {"money_factor": False, "airport_type": False, "range": False, "battery_charging_rate": False,\
+                         "risk_factor": False, "co_2_rate": False, "flight_speed": False}
         self.risk = 0
         self.risk_factor = random.randint(80, 120) #upgrade arpoo riskiä kentälle etäisyys / risk factor
         self.co_2 = 0
@@ -221,6 +224,12 @@ class User:
 
     #lentokoneen päivitysfunktio
     def plane_upgrade(self):
+        print("Saatavilla olevat päivitykset:")
+        for x in self.upgrades:
+            if self.upgrades[x] == False:
+                print(x)
+        selected_upgrade = input("Anna haluamasi päivitys tai 'Peruuta' peruuttaaksesi päivityksen: ")
+        print(selected_upgrade + " valittu!")
         return 0
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
