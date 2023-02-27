@@ -57,7 +57,7 @@ class User:
     def __init__(self, name):
         self.name = name
         self.money = 4500000
-        self.money_factor = random.randint(12000, 17000) #upgrade
+        self.money_factor = random.randint(12000, 17000) #upgrade kentän riski * tämä = paljonko rahaa saa ryöstöstä
         self.time = 0
         self.current_lon = str(24.957996168)
         self.current_lat = str(60.316998732)
@@ -65,14 +65,14 @@ class User:
         self.range = str(250) #upgrade
         self.current_country = "FI"
         self.battery_charge_level = self.range
-        self.battery_charging_rate = 30 #upgrade
+        self.battery_charging_rate = 30 #upgrade montako kilsaa tulee tunnissa rangea
         self.player_location = "helsinki"
         self.upgrades = 0
         self.risk = 0
-        self.risk_factor = random.randint(80, 120) #upgrade
+        self.risk_factor = random.randint(80, 120) #upgrade arpoo riskiä kentälle etäisyys / risk factor
         self.co_2 = 0
-        self.co_2_rate = 0.02 #upgrade
-        self.flight_speed = 0.01 #upgrade
+        self.co_2_rate = 0.02 #upgrade  etäisyys kertaa tämä on montako tonnia co2 tulee
+        self.flight_speed = 0.01 #upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
         self.difficulty = 5000000
         self.vic_con = False
 
