@@ -232,7 +232,8 @@ Player = User(name)
 # Main loop
 while Player.vic_con == False:
     event_selector(Player)
-
+    if Player.money >= Player.difficulty:
+        break
 
 
 
