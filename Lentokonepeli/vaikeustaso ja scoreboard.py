@@ -34,7 +34,7 @@ name = input("Syötä pelaajan nimi: ")
 score = int(final_score)
 scoreboard[name] = score
 
-print("\nScoreboard:")
+print("\nTu:")
 for name, score in scoreboard.items():
     print(f"{name}: {score}")
 

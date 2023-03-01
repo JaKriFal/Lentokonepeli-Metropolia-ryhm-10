@@ -113,8 +113,8 @@ class User:
         while not target.isnumeric() or not (1 <= int(target) <= len(user_result)):
             print("Virheellinen syöte")
             target = input("Anna kentän numero mille haluat liikkua: ")
-        print(f"lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
-        print(f"olet nyt kentällä {result[int(target) - 1][0]}")
+        print(f"Lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
+        print(f"Olet nyt kentällä {result[int(target) - 1][0]}")
 
 
     #päivitetään oma sijainti
@@ -135,39 +135,39 @@ class User:
         choice = "x"
         while choice != "Y" and choice != "N":
             #charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
-            choice = input(f"haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
+            choice = input(f"Haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if choice == "Y":
                 #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
                 if self.risk <= random.randint(0, 100):
                     print("onnistuit ryöstössäsi")
                     self.money = self.money + self.risk * self.money_factor
-                    print(f"sait ryöstettyä {round(self.risk * self.money_factor)}€")
+                    print(f"Sait ryöstettyä {round(self.risk * self.money_factor)}€")
                 else:
                     #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
-                    print("jäit kiinni")
+                    print("Jäit kiinni")
                     self.money = self.money - self.risk * self.money_factor * 2
-                    print(f"menetit {round(self.risk * self.money_factor * 2)}€")
+                    print(f"Menetit {round(self.risk * self.money_factor * 2)}€")
 
             elif choice == "N":
                 return
             else:
-                print("komentoa ei tunnistettu")
+                print("Komentoa ei tunnistettu")
         return
 
     def Charging(self):
         choice = ""
         while choice != "Y" and choice != "N":
             charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
-            choice = input(f"haluatko ladatta lentokonettasi. sinulla on {round(int(self.battery_charge_level))} KM akkua jäljellä. \n"
-                           f"akun täyteen lataaminen kestäisi {round(charging_time)} tuntia. Y/N: ")
+            choice = input(f"Haluatko ladata lentokonettasi? Sinulla on {round(int(self.battery_charge_level))} KM akkua jäljellä. \n"
+                           f"Akun täyteen lataaminen kestäisi {round(charging_time)} tuntia. Y/N: ")
             if choice == "Y":
-                print(f"lentokoneen akku on nyt täynnä. latauksessa kesti {round(charging_time)}")
+                print(f"Lentokoneen akku on nyt täynnä. Latauksessa kesti {round(charging_time)}")
                 self.time = self.time + charging_time
                 self.battery_charge_level = self.range
             elif choice == "N":
                 return
             else:
-                print("komentoa ei tunnistettu")
+                print("Komentoa ei tunnistettu")
         return
 
     def Change_country(self):
@@ -194,7 +194,7 @@ class User:
         countries = [t[0] for t in tulos]
         country = ""
         while country not in countries:
-            country = input("anna maakoodi johon haluat matkustaa: ")
+            country = input("Anna maakoodi johon haluat matkustaa: ")
             self.current_country = country
             if country not in countries:
                 print("Virheellinen maakoodi. Anna uusi maakoodi.")
@@ -203,10 +203,10 @@ class User:
         return
 
     def help(self):
-        print(f"pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nkun haluat ryöstää lentokentän"
-              f" valitse menusta Lennä. komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
-              f"sekä riskin jäädä kiinni ryöstöstä. \nvalittuasi kenttää vastaavan numeron sinulla on mahdollisuus ryöstää kenttä."
-              f"\njos ryöstö onnistui sinä sait ilmoitetun määrän rahaa. jos ryöstö epäonnistui joudut lahjomaan tuomarin ja menetät rahaa")
+        print(f"Pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nJos haluat ryöstää lentokentän"
+              f" valitse menusta Lennä. Komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
+              f"sekä riskin jäädä kiinni ryöstöstä. \nValittuasi kenttää vastaavan numeron, sinulla on mahdollisuus ryöstää kenttä."
+              f"\nJos ryöstö onnistui, sinä saat ilmoitetun määrän rahaa. Jos taas ryöstö epäonnistui, joudut lahjomaan tuomarin ja menetät rahaa")
         return
 
     def end_game(self):
