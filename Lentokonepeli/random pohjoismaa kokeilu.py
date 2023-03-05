@@ -1,12 +1,12 @@
-import mysql.connector
+import mariadb
 import random
 
-nordic_countries = {'Denmark': 'DK', 'Finland': 'FI', 'Iceland': 'IS', 'Norway': 'NO', 'Sweden': 'SE'}
-country = input(f"Choose a Nordic countrycode to get a spawn location, DK, FI, IS, NO or SE ({', '.join(nordic_countries.keys())}): ")
+nordic_countries = {'Tanska': 'DK', 'Suomi': 'FI', 'Islanti': 'IS', 'Norja': 'NO', 'Ruotsi': 'SE'}
+country = input(f"Valitse pohjoismaiden maakoodi saadaksesi aloitus lentokentän, DK, FI, IS, NO or SE ({', '.join(nordic_countries.keys())}): ")
 
 
 def get_airport(country_code):
-    conn = mysql.connector.connect(
+    conn = mariadb.connect(
         host='127.0.0.1',
         port=3306,
         database='flight_game',
@@ -21,9 +21,9 @@ def get_airport(country_code):
     results = cursor.fetchall()
 
     if len(results) == 0:
-        print("No airports found for that country.")
+        print("Ei lentokenttää maakoodilla.")
     else:
         airport = random.choice(results)
-        print("Your starting airport is: ", airport)
+        print("Aloitus lentokenttäsi on: ", airport)
 
 get_airport(country)
