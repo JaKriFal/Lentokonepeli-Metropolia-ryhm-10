@@ -310,12 +310,12 @@ name = input("Anna pelaajan nimi: ")
 Player = User(name)
 
 # Main loop
-while Player.game_on == True:
+while Player.game_on:
     event_selector(Player)
     if Player.money >= Player.difficulty:
         Player.vic_con = True
         Player.game_on = False
-        break
+
 
 
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
