@@ -18,8 +18,8 @@ vic_con = False
 
 # Tänne funktiot
 
-def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille
-    print("Valitse komento: \n Lennä \n Kauppa \n Tiedot \n Päivitä \n Apua \n Lopeta")
+def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille - Done
+    print("Valitse komento: \n Lennä \n Tiedot \n Päivitä \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
         #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
@@ -57,6 +57,7 @@ def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaiki
 
 class User:
     def __init__(self, name):
+        self.game_on = True
         self.name = name
         self.money = 4500000
         self.money_factor = random.randint(12000, 17000) #upgrade kentän riski * tämä = paljonko rahaa saa ryöstöstä
@@ -69,7 +70,7 @@ class User:
         self.battery_charge_level = self.range
         self.battery_charging_rate = 30 #upgrade montako kilsaa tulee tunnissa rangea
         self.player_location = "helsinki"
-        self.upgrades = {"money_factor": False, "airport_type": False, "range": False, "battery_charging_rate": False,\
+        self.upgrades = {"money_factor": False, "airport_type": True, "range": False, "battery_charging_rate": False,\
                          "risk_factor": False, "co_2_rate": False, "flight_speed": False}
         self.risk = 0
         self.risk_factor = random.randint(80, 120) #upgrade arpoo riskiä kentälle etäisyys / risk factor
@@ -78,6 +79,10 @@ class User:
         self.flight_speed = 0.01 #upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
         self.difficulty = 5000000
         self.vic_con = False
+
+
+    def get_score(self):
+        return float(self.money - self.time * 10 - self.co_2 * 15)
 
     def move(self):
         #lista riskeille
@@ -204,61 +209,93 @@ class User:
 
     def help(self):
         print(f"Pelissä sinun on tarkoitus kerätä rahaa {self.difficulty}€ verran ryöstelemällä lentokenttiä. \nJos haluat ryöstää lentokentän"
-              f" valitse menusta Lennä. Komento vie sinut valitsemaasi lentokentälle\nListassa näet lentokenttiä, niiden etäisyyksiä"
-              f"sekä riskin jäädä kiinni ryöstöstä. \nValittuasi kenttää vastaavan numeron, sinulla on mahdollisuus ryöstää kenttä."
-              f"\nJos ryöstö onnistui, sinä saat ilmoitetun määrän rahaa. Jos taas ryöstö epäonnistui, joudut lahjomaan tuomarin ja menetät rahaa")
+              f" valitse valikosta Lennä. Komento vie sinut valitsemallesi lentokentälle\nListassa näet lentokenttiä, niiden etäisyydet"
+              f" sekä riskin jäädä kiinni ryöstöstä. \nValittuasi kenttää vastaavan numeron, sinulla on mahdollisuus ryöstää kenttä."
+              f"\nJos ryöstö onnistui, sinä saat ilmoitetun määrän rahaa. Jos taas ryöstö epäonnistui, joudut lahjomaan tuomarin ja menetät rahaa"
+              f"\nVoit myös päivittää lentokoneesi ominaisuuksia jokaisella lentokentällä.")
         return
 
     def end_game(self):
         quitornot = input("Lopetetaanko peli? Y/N: ")
         if quitornot == "Y":
-            self.vic_con = True
+            self.game_on = False
         elif quitornot == "N":
-            self.vic_con = False
+            self.game_on = True
         else:
             print("Komentoa ei tunnistettu")
 
     def get_info(self):
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
-              f"CO2 päästösi ovat {round(self.co_2)} tonnia \nrahamäärä on {round(self.money)} €")
+              f"CO2 päästösi ovat {round(self.co_2)} tonnia \nRahamäärä on {round(self.money)} € \nTämän hetkinen pistemäärä on {self.get_score()}")
 
     #lentokoneen päivitysfunktio
     def plane_upgrade(self):
-        print("Saatavilla olevat päivitykset:") #tarkistaa sanakirjasta mitä päivityksiä saatavilla
+        print("Kaikki päivitykset maksavat 100000€. Saatavilla olevat päivitykset:") #tarkistaa sanakirjasta mitä päivityksiä saatavilla
         for x in self.upgrades: #looppi printtaa päivitykset
             if self.upgrades[x] == False:
                 print(x)
-        selected_upgrade = input("Anna haluamasi päivitys tai 'Peruuta' peruuttaaksesi päivityksen: ")
+        selected_upgrade = input("Anna haluamasi päivitys, 'Info' saadaksesi lisätietoja tai 'Peruuta' peruuttaaksesi päivityksen: ")
         if selected_upgrade == 'Peruuta':
-            print("Päivitys peruutettu")
+            print("Päivitys peruutettu.")
+        elif selected_upgrade == 'Info':
+            print("'money_factor' lisää ryöstöistä saatua rahamäärää. \n'range' lisää lentokoneesi kantomatkaa.\n'battery_charging_rate' lisää akun latausnopeutta\n'risk_factor' vähentää kiinnijäämisriskiä.\n'co_2_rate' vähentää lentokoneesi päästöjä.\n'flight_speed' lisää lentokoneesi nopeutta. ")
+            return
         elif selected_upgrade == "money_factor":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
-            self.money_factor = self.money_factor + 0
+            self.money_factor = self.money_factor + 2000
+            self.money -= 100000
         elif selected_upgrade == "airport_type":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
             self.airport_type = self.airport_type + ""
+            self.money -= 100000
         elif selected_upgrade == "range":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
             self.range = "300"
+            self.money -= 100000
         elif selected_upgrade == "battery_charging_rate":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
-            self.battery_charging_rate = self.battery_charging_rate + 0
+            self.battery_charging_rate = self.battery_charging_rate + 10
+            self.money -= 100000
         elif selected_upgrade == "risk_factor":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
-            self.risk_factor = self.risk_factor + 0
+            self.risk_factor = self.risk_factor + 20
+            self.money -= 100000
         elif selected_upgrade == "co_2_rate":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
-            self.co_2_rate = self.co_2_rate + 0
+            self.co_2_rate = self.co_2_rate + 0.01
+            self.money -= 100000
         elif selected_upgrade == "flight_speed":
+            if self.money < 100000:
+                print("Ei rahaa päivitykseen.")
+                return
             print(selected_upgrade + " valittu!")
             self.upgrades[selected_upgrade] = True
-            self.flight_speed = self.flight_speed + 0
+            self.flight_speed = self.flight_speed + 0.01
+            self.money -= 100000
         else:
             print("Komentoa ei tunnistettu, palataan toimintavalikkoon.")
         return
@@ -266,22 +303,28 @@ class User:
 
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
+print(f"Tervetuloa Lentokonepeli-protoon, pelin tavoite on saada kasaan 5000000€ tekemällä ryöstöjä eri kaupungeissa.")
+
 name = input("Anna pelaajan nimi: ")
 
 Player = User(name)
 
 # Main loop
-while Player.vic_con == False:
+while Player.game_on == True:
     event_selector(Player)
     if Player.money >= Player.difficulty:
+        Player.vic_con = True
+        Player.game_on = False
         break
 
 
-
-
 #Tänne toiminnot jotka ajetaan kun pelikerta päättyy
-print("Voitit pelin. sinun tuloksesi ovat:")
-print(f"ryöstit {round(Player.money)}€")
-print(f"sinun co2 jälkesi oli {round(Player.co_2)} tonnia")
-print(f"sinun aikasi oli {round(Player.time)} tuntia")
+if Player.vic_con:
+    print("Voitit pelin! sinun tuloksesi ovat:")
+    print(f"ryöstit {round(Player.money)}€")
+    print(f"Sinun co2 jälkesi oli {round(Player.co_2)} tonnia")
+    print(f"Sinun aikasi oli {round(Player.time)} tuntia")
+    print(f"kokonaispisteesi olivat {Player.get_score}")
+else:
+    print("Peli lopetettu.")
 
