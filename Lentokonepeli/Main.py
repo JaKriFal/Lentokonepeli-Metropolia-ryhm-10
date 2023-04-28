@@ -1,18 +1,19 @@
 # Tänne importit
+
 import random
 import mariadb
 from prettytable import PrettyTable
-from weather import weather
+import weather
 
 
 yhteys = mariadb.connect(
-         host='localhost',
-         port= 3306,
-         database='flight_game',
-         user='user1',
-         password='password1',
-         autocommit=True
-         )
+    host='localhost',
+    port=3306,
+    database='flight_game',
+    user='user1',
+    password='password1',
+    autocommit=True
+)
 
 
 # Tänne globaalien muuttujien alustaminen
@@ -20,11 +21,13 @@ vic_con = False
 
 # Tänne funktiot
 
-def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille - Done
+
+# nää on ihan placeholdereita vielä, tehdään kaikille toiminnoille omat funktiot Userille - Done
+def event_selector(User):
     print("Valitse komento: \n Lennä \n Tiedot \n Päivitä \n Apua \n Lopeta")
     choice = input("Anna komento: ")
     if choice == "Lennä":
-        #alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
+        # alle 300km etäisyydellä jää liian helposti yhden kentän ansaan joten maan vaihto aukeaa vasta ekan range upgrade jälkeen
         if int(User.range) > 300:
             change_country = input("Valitse haluatko vaihtaa maata. Y/N: ")
             if change_country == "Y":
@@ -57,46 +60,52 @@ def event_selector(User): #nää on ihan placeholdereita vielä, tehdään kaiki
 
 # Tänne luokka-alustukset (varmaan lähinnä User/Pelaaja)
 
+
 class User:
     def __init__(self, name):
         self.game_on = True
         self.name = name
         self.money = 4500000
-        self.money_factor = random.randint(12000, 17000) #upgrade kentän riski * tämä = paljonko rahaa saa ryöstöstä
+        # upgrade kentän riski * tämä = paljonko rahaa saa ryöstöstä
+        self.money_factor = random.randint(12000, 17000)
         self.time = 0
         self.current_lon = str(24.957996168)
         self.current_lat = str(60.316998732)
-        self.airport_type = "small_airport" #upgrade
-        self.range = str(250) #upgrade
+        self.airport_type = "small_airport"  # upgrade
+        self.range = str(250)  # upgrade
         self.current_country = "FI"
         self.battery_charge_level = self.range
-        self.battery_charging_rate = 30 #upgrade montako kilsaa tulee tunnissa rangea
+        self.battery_charging_rate = 30  # upgrade montako kilsaa tulee tunnissa rangea
         self.player_location = "helsinki"
-        self.upgrades = {"money_factor": False, "airport_type": True, "range": False, "battery_charging_rate": False,\
+        self.upgrades = {"money_factor": False, "airport_type": True, "range": False, "battery_charging_rate": False,
                          "risk_factor": False, "co_2_rate": False, "flight_speed": False}
         self.risk = 0
-        self.risk_factor = random.randint(80, 120) #upgrade arpoo riskiä kentälle etäisyys / risk factor
+        # upgrade arpoo riskiä kentälle etäisyys / risk factor
+        self.risk_factor = random.randint(80, 120)
         self.co_2 = 0
-        self.co_2_rate = 0.02 #upgrade  etäisyys kertaa tämä on montako tonnia co2 tulee
-        self.flight_speed = 0.01 #upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
+        self.co_2_rate = 0.02  # upgrade  etäisyys kertaa tämä on montako tonnia co2 tulee
+        # upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
+        self.flight_speed = 0.01
         self.difficulty = 5000000
         self.vic_con = False
         self.weather = 0
-
 
     def get_score(self):
         return float(self.money - self.time * 10 - self.co_2 * 15)
 
     def move(self):
-        #lista riskeille
+        # lista riskeille
         risk_list = []
-    #pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
+    # pyydetään sql kentät tietyn etäisyyden päässä omasta sijainnista
         sql = "select name, latitude_deg, longitude_deg, "
-        sql += "ST_Distance_Sphere( point ('" + self.current_lon + "','" + self.current_lat + "'),"
+        sql += "ST_Distance_Sphere( point ('" + \
+            self.current_lon + "','" + self.current_lat + "'),"
         sql += "point(longitude_deg, latitude_deg)) * .001"
         sql += "as `distance_in_km` from `airport` "
-        sql += "where type = '" + self.airport_type + "'and iso_country = '" + self.current_country + "'"
-        sql += " having `distance_in_km` <= '" + str(self.battery_charge_level) + "'"
+        sql += "where type = '" + self.airport_type + \
+            "'and iso_country = '" + self.current_country + "'"
+        sql += " having `distance_in_km` <= '" + \
+            str(self.battery_charge_level) + "'"
         sql += "order by `distance_in_km` asc"
 
         # print(sql)
@@ -104,60 +113,68 @@ class User:
         kursori.execute(sql)
         result = kursori.fetchall()
 
-    #luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
+    # luodaan uusi lista josta tehdään käyttäjälle näkyvä taulukko
         user_result = [(item[0], round(item[-1])) for item in result]
         table = PrettyTable()
-        table.field_names = ["#", "Lentokentän nimi", "Etäisyys KM", "Riski jäädä kiinni %"]
+        table.field_names = ["#", "Lentokentän nimi",
+                             "Etäisyys KM", "Riski jäädä kiinni %"]
         for i, row in enumerate(user_result):
-            #lasketaan etäisyyden mukaan riski jokaiselle kentälle jäädä kiinni
+            # lasketaan etäisyyden mukaan riski jokaiselle kentälle jäädä kiinni
             distance = row[-1]
             risk = round((distance / self.risk_factor) + self.risk, 2)
             risk_list.append(risk)
             table.add_row([i + 1] + list(row) + [risk])
         print(table)
 
-        #kysytään mihin kentälle halutaan
+        # kysytään mihin kentälle halutaan
         target = input("Anna kentän numero mille haluat liikkua: ")
         while not target.isnumeric() or not (1 <= int(target) <= len(user_result)):
             print("Virheellinen syöte")
             target = input("Anna kentän numero mille haluat liikkua: ")
-        print(f"Lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
+        print(
+            f"Lennossa kesti {round(result[int(target) - 1][3] * self.flight_speed, 1)} tuntia")
         print(f"Olet nyt kentällä {result[int(target) - 1][0]}")
 
-
-    #päivitetään oma sijainti
+    # päivitetään oma sijainti
         self.current_lon = str(result[int(target) - 1][2])
         self.current_lat = str(result[int(target) - 1][1])
         self.player_location = result[int(target) - 1][0]
-    #kauanko lennossa kesti
+    # kauanko lennossa kesti
         self.time = self.time + result[int(target) - 1][3] * 0.01
-    #co2 päästöt
+    # co2 päästöt
         self.co_2 = self.co_2 + result[int(target) - 1][3] * self.co_2_rate
-    #paljonko akussa rangea lennon jälkeen
-        self.battery_charge_level = int(self.range) - result[int(target) - 1][3]
-    #tallenetaan valitun kentän riski
+    # paljonko akussa rangea lennon jälkeen
+        self.battery_charge_level = int(
+            self.range) - result[int(target) - 1][3]
+    # tallenetaan valitun kentän riski
         self.risk = risk_list[int(target)-1]
 
-    #printataan sää
-        weather(self.player_location)
+    # printataan sää
+        self.weather = weather.get_weather(self.player_location)
+        # weather_info = weather.Get_weather(User.player_location)
+        # print(weather_info)
+
         return
 
     def Robbery(self):
         choice = "x"
         while choice != "Y" and choice != "N":
-            #charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
-            choice = input(f"Haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
+            # charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
+            choice = input(
+                f"Haluatko tehdä ryöstön? \nRiskisi jäädä kiinni on {self.risk}. Y/N: ")
             if choice == "Y":
-                #tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
+                # tehdään ryöstö. chekataan onnistuko ryöstö ja päivitetään rahat sekä latauksee kulunu aika
                 if self.risk <= random.randint(0, 100):
                     print("onnistuit ryöstössäsi")
                     self.money = self.money + self.risk * self.money_factor
-                    print(f"Sait ryöstettyä {round(self.risk * self.money_factor)}€")
+                    print(
+                        f"Sait ryöstettyä {round(self.risk * self.money_factor)}€")
                 else:
-                    #ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
+                    # ryöstö epäonnistu. miinustetaan rahat ja päivitetään latauksee kulunu aika
                     print("Jäit kiinni")
                     self.money = self.money - self.risk * self.money_factor * 2
-                    print(f"Menetit {round(self.risk * self.money_factor * 2)}€")
+                    print(
+                        f"Menetit {round(self.risk * self.money_factor * 2)}€")
 
             elif choice == "N":
                 return
@@ -168,11 +185,13 @@ class User:
     def Charging(self):
         choice = ""
         while choice != "Y" and choice != "N":
-            charging_time = (int(self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
+            charging_time = (int(
+                self.range) - int(self.battery_charge_level)) / int(self.battery_charging_rate)
             choice = input(f"Haluatko ladata lentokonettasi? Sinulla on {round(int(self.battery_charge_level))} KM akkua jäljellä. \n"
                            f"Akun täyteen lataaminen kestäisi {round(charging_time)} tuntia. Y/N: ")
             if choice == "Y":
-                print(f"Lentokoneen akku on nyt täynnä. Latauksessa kesti {round(charging_time)}")
+                print(
+                    f"Lentokoneen akku on nyt täynnä. Latauksessa kesti {round(charging_time)}")
                 self.time = self.time + charging_time
                 self.battery_charge_level = self.range
             elif choice == "N":
@@ -182,13 +201,15 @@ class User:
         return
 
     def Change_country(self):
-        #haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
+        # haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
         sql = "SELECT iso_country, COUNT(*) AS airport_count "
         sql += "FROM airport "
         sql += "WHERE type = '" + self.airport_type + "' "
         sql += "AND iso_country != '" + self.current_country + "' "
-        sql += "AND ST_Distance_Sphere(point('" + self.current_lon + "','" + self.current_lat + "'), "
-        sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + str(self.range)
+        sql += "AND ST_Distance_Sphere(point('" + \
+            self.current_lon + "','" + self.current_lat + "'), "
+        sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + \
+            str(self.range)
         sql += " GROUP BY iso_country"
 
         kursori = yhteys.cursor()
@@ -201,7 +222,7 @@ class User:
         for rivi in tulos:
             table.add_row([rivi[0], rivi[1]])
         print(table)
-        #valitaan maa mihin lennetään
+        # valitaan maa mihin lennetään
         countries = [t[0] for t in tulos]
         country = ""
         while country not in countries:
@@ -209,7 +230,7 @@ class User:
             self.current_country = country
             if country not in countries:
                 print("Virheellinen maakoodi. Anna uusi maakoodi.")
-        #nollataan riski
+        # nollataan riski
         self.risk = 0
         return
 
@@ -234,13 +255,15 @@ class User:
         print(f"Pelaajan nimi on {self.name}, \nPaikka on {self.player_location},\nAikaa on kulunut {round(self.time)} tuntia \n"
               f"CO2 päästösi ovat {round(self.co_2)} tonnia \nRahamäärä on {round(self.money)} € \nTämän hetkinen pistemäärä on {self.get_score()}")
 
-    #lentokoneen päivitysfunktio
+    # lentokoneen päivitysfunktio
     def plane_upgrade(self):
-        print("Kaikki päivitykset maksavat 100000€. Saatavilla olevat päivitykset:") #tarkistaa sanakirjasta mitä päivityksiä saatavilla
-        for x in self.upgrades: #looppi printtaa päivitykset
+        # tarkistaa sanakirjasta mitä päivityksiä saatavilla
+        print("Kaikki päivitykset maksavat 100000€. Saatavilla olevat päivitykset:")
+        for x in self.upgrades:  # looppi printtaa päivitykset
             if self.upgrades[x] == False:
                 print(x)
-        selected_upgrade = input("Anna haluamasi päivitys, 'Info' saadaksesi lisätietoja tai 'Peruuta' peruuttaaksesi päivityksen: ")
+        selected_upgrade = input(
+            "Anna haluamasi päivitys, 'Info' saadaksesi lisätietoja tai 'Peruuta' peruuttaaksesi päivityksen: ")
         if selected_upgrade == 'Peruuta':
             print("Päivitys peruutettu.")
         elif selected_upgrade == 'Info':
@@ -307,7 +330,7 @@ class User:
         return
 
 
-#Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
+# Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 print(f"Tervetuloa Lentokonepeli-protoon, pelin tavoite on saada kasaan 5000000€ tekemällä ryöstöjä eri kaupungeissa.")
 
@@ -323,8 +346,7 @@ while Player.game_on:
         Player.game_on = False
 
 
-
-#Tänne toiminnot jotka ajetaan kun pelikerta päättyy
+# Tänne toiminnot jotka ajetaan kun pelikerta päättyy
 if Player.vic_con:
     print("Voitit pelin! sinun tuloksesi ovat:")
     print(f"ryöstit {round(Player.money)}€")
@@ -333,4 +355,3 @@ if Player.vic_con:
     print(f"kokonaispisteesi olivat {Player.get_score}")
 else:
     print("Peli lopetettu.")
-
