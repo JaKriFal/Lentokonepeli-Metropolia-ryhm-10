@@ -2,6 +2,7 @@
 import random
 import mariadb
 from prettytable import PrettyTable
+from weather import weather
 
 
 yhteys = mariadb.connect(
@@ -12,6 +13,7 @@ yhteys = mariadb.connect(
          password='password1',
          autocommit=True
          )
+
 
 # Tänne globaalien muuttujien alustaminen
 vic_con = False
@@ -79,6 +81,7 @@ class User:
         self.flight_speed = 0.01 #upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
         self.difficulty = 5000000
         self.vic_con = False
+        self.weather = 0
 
 
     def get_score(self):
@@ -134,6 +137,9 @@ class User:
         self.battery_charge_level = int(self.range) - result[int(target) - 1][3]
     #tallenetaan valitun kentän riski
         self.risk = risk_list[int(target)-1]
+
+    #printataan sää
+        weather(self.player_location)
         return
 
     def Robbery(self):
