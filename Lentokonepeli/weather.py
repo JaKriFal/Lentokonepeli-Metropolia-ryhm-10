@@ -9,7 +9,7 @@ def Get_weather(player_location):
     response = requests.get(weather_url).json()
     if "main" in response and "temp" in response["main"]:
         temperature = response["main"]["temp"]
-        final_temp = int(temperature) - 273.15
+        final_temp = round(int(temperature) - 273.15, 2)
     else:
         final_temp = None
     if "weather" in response and response["weather"]:
