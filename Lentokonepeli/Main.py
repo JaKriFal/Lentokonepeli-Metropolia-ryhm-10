@@ -150,7 +150,7 @@ class User:
         self.risk = risk_list[int(target)-1]
 
     # printataan sää
-        self.weather = weather.get_weather(self.player_location)
+        self.weather = weather.Get_weather(self.player_location)
         # weather_info = weather.Get_weather(User.player_location)
         # print(weather_info)
 
