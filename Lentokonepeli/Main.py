@@ -2,7 +2,9 @@
 import random
 import mariadb
 from prettytable import PrettyTable
-from weather import weather
+#from weather import weather
+
+
 
 
 yhteys = mariadb.connect(
@@ -139,7 +141,7 @@ class User:
         self.risk = risk_list[int(target)-1]
 
     #printataan sää
-        weather(self.player_location)
+        #weather(self.player_location)
         return
 
     def Robbery(self):
