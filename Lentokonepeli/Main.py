@@ -309,6 +309,7 @@ class User:
         return
 
 
+
 #Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
 
 print(f"Tervetuloa Lentokonepeli-protoon, pelin tavoite on saada kasaan 5000000€ tekemällä ryöstöjä eri kaupungeissa.")
