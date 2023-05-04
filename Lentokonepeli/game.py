@@ -224,7 +224,7 @@ def airports():
 
     response = {
         'status': 'ok',
-        "lista_kentistä": result,
+        "lista_kentista": result,
         "riskilista_kentille": Player.risk_list,
     }
     return jsonify(response)
