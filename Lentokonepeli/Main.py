@@ -1,5 +1,5 @@
 # Tänne importit
-
+from flask import Flask, jsonify, request
 import random
 import mariadb
 from prettytable import PrettyTable
