@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.8.0/dist/leaflet.css" />
+    <link href="gamestyle.css" rel="stylesheet">
+    <script src="https://unpkg.com/leaflet@1.8.0/dist/leaflet.js" defer></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.esm.js" defer></script>
+    <script nomodule src="https://cdn.jsdelivr.net/npm/ionicons/dist/ionicons/ionicons.js" defer></script>
+    <script src="gamesite.js" defer></script>
+    <title>Working title</title>
+</head>
+<body>
+    <!-- nettisivu main.py pelille -->
+    <header>
+        <h1>Working title</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="gamesite.html">Game</a></li>
+                <li><a href="about.html">About</a></li>
+            </ul>
+        </nav>
+    </header>
+  <!-- leaflet kartta johon tulee pisteet main.py listasta -->
+
+<main class="flex-wrap">
+            <div id="map">
+                <img class="responsive-img" src="img/finland.svg" alt="map of finland" >
+            </div>
+        <div class="kama">
+            <div id="score">
+                <h2>Score</h2>
+                <p id="scoretext">0</p>
+            </div>
+            <div id="timer">
+                <h2>Time left</h2>
+                <p id="timertext">0</p>
+            </div>
+            <div id="gameover">
+                <h2>Game over</h2>
+                <p id="gameovertext">0</p>
+            </div>
+            <div id="highscore">
+                <h2>Highscore</h2>
+                <p id="highscoretext">0</p>
+            </div>
+            <div id="restart">
+                <button id="restartbutton">Restart</button>
+            </div>
+        </div>
+</main>
+</body>
+</html>

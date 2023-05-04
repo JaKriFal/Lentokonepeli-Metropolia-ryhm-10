@@ -1,0 +1,75 @@
+.flex-wrap
+{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+    padding: 4rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+
+
+}
+#map
+{
+    width: 3600px;
+    height: 1000px;
+    background-color: #000000;
+    border: 1px solid #000000;
+    margin: 0px;
+    padding: 0px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+
+}
+header
+{
+    /* header keskelle sinisellä taustalla teksti mustalla*/
+    background-color: #0000FF;
+    width: 100%;
+    height: 100px;
+    text-align: center;
+    padding: 4rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    color: #000000;
+
+
+    
+}
+li
+{
+    /*listan komponentit vierekkäin */
+    display: inline-block;
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+}
+a
+{
+    /* tekstien välille tasasesti tilaa ja kokoa vähän isommaksi */
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    font-size: 1.5rem;
+    color: #000000;
+    text-decoration: none;
+}
+.kama
+{
+    /* divit erilleen toisistaan riviin*/
+    display: inline-block;
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+   
+}

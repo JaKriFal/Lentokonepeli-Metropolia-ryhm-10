@@ -3,7 +3,7 @@
 import random
 import mariadb
 from prettytable import PrettyTable
-import weather
+# from weather import weather
 
 
 yhteys = mariadb.connect(
@@ -150,10 +150,7 @@ class User:
         self.risk = risk_list[int(target)-1]
 
     # printataan sää
-        self.weather = weather.Get_weather(self.player_location)
-        # weather_info = weather.Get_weather(User.player_location)
-        # print(weather_info)
-
+        # weather(self.player_location)
         return
 
     def Robbery(self):
@@ -331,7 +328,6 @@ class User:
 
 
 # Pelin alustus(mm. kysytään pelaajalta nimi ja optionssit yms yms
-
 print(f"Tervetuloa Lentokonepeli-protoon, pelin tavoite on saada kasaan 5000000€ tekemällä ryöstöjä eri kaupungeissa.")
 
 name = input("Anna pelaajan nimi: ")
