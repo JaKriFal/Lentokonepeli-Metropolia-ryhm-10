@@ -5,6 +5,9 @@ L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
 }).addTo(map);
 map.setView([60, 24], 7);
 
+let restartButton = document.getElementById('restartbutton')
+restartButton.addEventListener('click', getList)
+/*
 // JSON-pyynnön tekeminen endpointiin
 $.getJSON("http://127.0.0.1:3000/kokeilu/", function(data) {
 
@@ -26,3 +29,12 @@ $.getJSON("http://127.0.0.1:3000/kokeilu/", function(data) {
             .bindPopup(point.name + "<br>Riski jäädä kiinni: " + point.risk + "<br>Etäisyys: " + point.distance.toFixed(2) + " km");
     }
 });
+
+
+ */
+
+async function getList() {
+    const response = await fetch('http://127.0.0.1:3000/kokeilu/')
+    const json = await response.json()
+    console.log(json)
+}
