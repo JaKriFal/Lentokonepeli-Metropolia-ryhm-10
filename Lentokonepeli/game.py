@@ -129,6 +129,7 @@ class User:
             print(
                 f"Menetit {round(self.risk * self.money_factor * 2)}€")
             how_much = self.risk * self.money_factor * 2
+            self.risk = 0
 
         return False, how_much
 
