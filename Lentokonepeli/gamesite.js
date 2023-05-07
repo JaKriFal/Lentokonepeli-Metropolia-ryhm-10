@@ -6,10 +6,10 @@ L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
 map.setView([60, 24], 7);
 
 
-//constants
+//tänne tallennetaan karttamerkit
 const airportMarkers = L.featureGroup().addTo(map);
 
-
+//eventlistenerit napeille
 let startButton = document.getElementById('startbutton')
 startButton.addEventListener('click', async function() {
         await gameUpdate()
@@ -25,6 +25,7 @@ resetButton.addEventListener('click', async function() {
 
     })
 
+//tällä haetaan suurin osa pelin datasta backendistä, mm karttatiedit ja pelaajan tiedit
 async function getData() {
     const response = await fetch('http://127.0.0.1:3000/kokeilu/')
     const json = await response.json()
@@ -32,6 +33,7 @@ async function getData() {
     return json
 }
 
+//tää funktio päivittää pelin html-sivulle
 async function gameUpdate() {
     const data = await getData()
     victoryCheck(data)
@@ -107,6 +109,8 @@ async function gameUpdate() {
     }
 
 }
+
+//funktio hoitaa pelaajatietojen päivityksen(raha, yms) ja sitä kutsutaan gameUpdatesta
 function updateStats(arg) {
     const data = arg.pstats
     const weather = arg.weather
@@ -125,6 +129,7 @@ function updateStats(arg) {
 
 }
 
+//Tää hoitaa lentokoneen päivityksen, tällä hetkellä vain yksi päivitys saatavilla
 async function gameUpgrade(updata, arg) {
     const data = arg.pstats
     if(!updata.upgrades['range']) {
@@ -143,6 +148,7 @@ async function gameUpgrade(updata, arg) {
 
 }
 
+//tarkistaa onko pelaaja ja ilmoittaa siitä
 function victoryCheck(arg) {
     data = arg.pstats
     const money =+data[0]
