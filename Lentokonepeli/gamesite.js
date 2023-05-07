@@ -35,6 +35,7 @@ async function getData() {
 
 async function gameUpdate() {
     const data = await getData()
+    victoryCheck(data)
     updateStats(data)
     const airports = data.lista_kentista
     const risks = data.riskilista_kentille
@@ -48,7 +49,7 @@ async function gameUpdate() {
             const h4 = document.createElement('h4');
             const h5 = document.createElement('h5')
             h4.innerHTML = airports[j][0]
-            h5.innerHTML = 'Kiinnijäämisriski: '+ risks[j] + '%'
+            h5.innerHTML = 'Risk of getting caught: '+ risks[j] + '%'
             popupContent.append(h4);
             popupContent.append(h5)
             testmarker.bindPopup(popupContent);
@@ -141,5 +142,23 @@ async function gameUpgrade(updata, arg) {
     }
     gameUpdate()
 
+}
+
+function victoryCheck(arg) {
+    data = arg.pstats
+    const money =+data[0]
+    if(money >= 4600000) {
+        const modal = document.querySelector('dialog')
+        modal.showModal()
+        const resetgame = document.getElementById('victoryresetbutton')
+        resetgame.addEventListener('click', async function() {
+            const response = await fetch('http://127.0.0.1:3000/reset/')
+            const resetjson = response.json()
+            console.log(resetjson)
+            modal.close()
+            await gameUpdate()
+
+        })
+    }
 }
 
