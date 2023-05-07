@@ -113,7 +113,7 @@ function updateStats(arg) {
     const moneydisplay = document.getElementById('Money')
     moneydisplay.innerHTML = data[0].toFixed(2) + " €"
     const timedisplay = document.getElementById('Time')
-    timedisplay.innerHTML = data[1].toFixed(2) + "h"
+    timedisplay.innerHTML = data[1].toFixed(2) + " h"
     const co2display = document.getElementById('CO2')
     co2display.innerHTML = data[2].toFixed(2) + " kg"
     const weatherdisplay = document.getElementById('Weather')
