@@ -68,6 +68,16 @@ async function gameUpdate() {
             popupContent.append(h4);
             testmarker.bindPopup(popupContent);
             testmarker._icon.classList.add("huechange");
+            const robButton = document.createElement('button');
+            robButton.classList.add('button');
+            robButton.innerHTML = 'Ryöstä';
+            popupContent.append(robButton);
+            robButton.addEventListener('click', async function () {
+                    const flyresponse = await fetch(`http://127.0.0.1:3000/kokeilu3/`)
+                    const robjson = robresponse.json
+                    console.log(robjson)
+                    await gameUpdate()
+            })
                     } else {
             const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
             airportMarkers.addLayer(testmarker)
