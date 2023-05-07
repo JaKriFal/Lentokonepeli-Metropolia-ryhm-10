@@ -164,37 +164,13 @@ class User:
 
         return False, how_much
 
-    def Change_country(self):
-        # haetaan tietokannoista lista maista joilla on lentokenttä koneen rangen sisällä
-        sql = "SELECT iso_country "
-        sql += "FROM airport "
-        sql += "WHERE type = '" + self.airport_type + "' "
-        sql += "AND iso_country != '" + self.current_country + "' "
-        sql += "AND ST_Distance_Sphere(point('" + \
-            self.current_lon + "','" + self.current_lat + "'), "
-        sql += "point(longitude_deg, latitude_deg)) * 0.001 <= " + \
-            str(self.range)
-        sql += " GROUP BY iso_country"
-
-        kursori = yhteys.cursor()
-        kursori.execute(sql)
-        self.tulos = kursori.fetchall()
-        return self.tulos
-
-    def Change_country2(self, country):
-        countries = [t[0] for t in self.tulos]
-        if country in countries:
-            self.current_country = country
-            print(self.current_country)
-            return
-        # nollataan riski
-        self.risk = 0
 
 Player = User()
 Player.move()
 Player.upgrade_loc(int(1))
 Player.time = 0
 Player.co_2 = 0
+
 
 @app.route('/upgrades/<arg>')
 def upgrade_plane(arg):
@@ -211,17 +187,6 @@ def upgrade_plane(arg):
     return jsonify(response)
 
 
-@app.route('/kokeilu5/<maakoodi>')
-def vaihda_maa(maakoodi):       # vaihtaa maan
-
-    Player.Change_country2(str(maakoodi))
-    response = {
-        'status': 'ok',
-
-
-    }
-    return jsonify(response)
-
 @app.route('/reset/')
 def game_start():  # aloittaa uuden pelin
     Player.reset()
@@ -230,11 +195,12 @@ def game_start():  # aloittaa uuden pelin
     Player.time = 0
     Player.co_2 = 0
 
-
     response = {
         'status': 'reset ok',
     }
     return jsonify(response)
+
+
 @app.route('/kokeilu4/')
 def Maan_vaihto():  # kertoo mihin maahan voi lentää
     Player.Change_country()
@@ -282,7 +248,8 @@ def liiku(number):
 @app.route('/kokeilu/')
 def airports():
 
-    pstats = [Player.money, Player.time, Player.co_2, Player.weather, Player.range, Player.player_location]
+    pstats = [Player.money, Player.time, Player.co_2,
+              Player.weather, Player.range, Player.player_location]
 
     weather = Get_weather(Player.player_location)
 
