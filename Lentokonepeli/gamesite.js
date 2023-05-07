@@ -74,6 +74,10 @@ async function gameUpdate() {
         h4.innerHTML = airports[j][0]
         popupContent.append(h4);
         testmarker.bindPopup(popupContent);
+        const flyButton = document.createElement('button');
+        flyButton.classList.add('button');
+        flyButton.innerHTML = 'Lennä';
+        popupContent.append(flyButton);
 
     }
 }
