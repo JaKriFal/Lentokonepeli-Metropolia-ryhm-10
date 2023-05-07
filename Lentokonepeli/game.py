@@ -161,6 +161,8 @@ class User:
 
 
 Player = User()
+Player.move()
+Player.upgrade_loc(int(1))
 
 
 @app.route('/kokeilu5/<maakoodi>')
@@ -221,6 +223,7 @@ def liiku(number):
 # lista kentistä mihin voi lentää ja riski jäädä kiinni
 @app.route('/kokeilu/')
 def airports():
+
 
     curr = [Player.player_location, Player.current_lat, Player.current_lon]
     result = Player.move()

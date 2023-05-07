@@ -55,38 +55,44 @@ async function getData() {
 }
 
 async function gameUpdate() {
-    const data = await getData()
-    const airports = data.lista_kentista
-    const selfmarker = L.marker([data.omapaikka[1], data.omapaikka[2]]).addTo(map);
-    airportMarkers.addLayer(selfmarker)
-    const popupContent = document.createElement('div');
-    const h4 = document.createElement('h4');
-        h4.innerHTML = data.omapaikka[0]
-        popupContent.append(h4);
-        selfmarker.bindPopup(popupContent);
-        selfmarker._icon.classList.add("huechange");
+    let data = await getData()
+    let airports = data.lista_kentista
+    airportMarkers.clearLayers();
     for(let j = 0; j < airports.length; j++){
-
-        const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
-        airportMarkers.addLayer(testmarker)
-        const popupContent = document.createElement('div');
-        const h4 = document.createElement('h4');
-        h4.innerHTML = airports[j][0]
-        popupContent.append(h4);
-        testmarker.bindPopup(popupContent);
-        const flyButton = document.createElement('button');
-        flyButton.classList.add('button');
-        flyButton.innerHTML = 'Lennä';
-        popupContent.append(flyButton);
-        flyButton.addEventListener('click', async function () {
+        if(j === 0) {
+            const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
+            airportMarkers.addLayer(testmarker)
+            const popupContent = document.createElement('div');
+            const h4 = document.createElement('h4');
+            h4.innerHTML = airports[j][0]
+            popupContent.append(h4);
+            testmarker.bindPopup(popupContent);
+            testmarker._icon.classList.add("huechange");
+                    } else {
+            const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
+            airportMarkers.addLayer(testmarker)
+            const popupContent = document.createElement('div');
+            const h4 = document.createElement('h4');
+            h4.innerHTML = airports[j][0]
+            popupContent.append(h4);
+            testmarker.bindPopup(popupContent);
+            const flyButton = document.createElement('button');
+            flyButton.classList.add('button');
+            flyButton.innerHTML = 'Lennä';
+            popupContent.append(flyButton);
+                    flyButton.addEventListener('click', async function () {
             const flyresponse = await fetch(`http://127.0.0.1:3000/kokeilu2/${j+1}`)
             const flyjson = flyresponse.json
             console.log(flyjson)
             await gameUpdate()
+
         })
+        map.flyTo([data.omapaikka[1], data.omapaikka[2]], 7);
+
+        }
 
 
     }
-    map.flyTo([data.omapaikka[1], data.omapaikka[2]], 10);
+
 }
 
