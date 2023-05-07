@@ -1,7 +1,7 @@
 import random
 import mariadb
 from prettytable import PrettyTable
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from weather import Get_weather
 
