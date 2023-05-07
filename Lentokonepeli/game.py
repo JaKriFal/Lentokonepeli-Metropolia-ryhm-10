@@ -214,6 +214,7 @@ def liiku(number):
 
 
     }
+    print("Fly ok!")
     return jsonify(response)
 
 
