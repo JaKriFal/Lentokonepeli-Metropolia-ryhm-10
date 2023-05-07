@@ -21,4 +21,4 @@ def Get_weather(player_location):
               " astetta ja " + desc2 + ".")
     else:
         print("Virhe haettaessa säätietoja kaupungista " + city + ".")
-    return
+    return [str(final_temp), desc2]

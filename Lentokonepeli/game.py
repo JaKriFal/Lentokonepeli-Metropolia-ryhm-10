@@ -3,6 +3,7 @@ import mariadb
 from prettytable import PrettyTable
 from flask import Flask, jsonify, request
 from flask_cors import CORS
+from weather import Get_weather
 
 app = Flask(__name__)
 CORS(app)
@@ -224,7 +225,9 @@ def liiku(number):
 @app.route('/kokeilu/')
 def airports():
 
-    pstats = [Player.money]
+    pstats = [Player.money, Player.time, Player.co_2, Player.weather, Player.range, Player.player_location]
+
+    weather = Get_weather(Player.player_location)
 
     curr = [Player.player_location, Player.current_lat, Player.current_lon]
     result = Player.move()
@@ -232,6 +235,7 @@ def airports():
     response = {
         'status': 'ok',
         'pstats': pstats,
+        'weather': weather,
         'omapaikka': curr,
         "lista_kentista": result,
         "riskilista_kentille": Player.risk_list,

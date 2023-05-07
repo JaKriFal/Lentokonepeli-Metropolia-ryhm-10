@@ -17,36 +17,6 @@ startButton.addEventListener('click', async function() {
 
     })
 
-
-/*
-            const marker = L.marker([airport.latitude, airport.longitude]).addTo(map);
-            airportMarkers.addLayer(marker);
-            marker.setIcon(blueIcon);
-// JSON-pyynnön tekeminen endpointiin
-$.getJSON("http://127.0.0.1:3000/kokeilu/", function(data) {
-
-    // Käsitellään vastausdatan pisteet
-    var points = data.lista_kentistä.map(function(point) {
-        return {
-            name: point[0],
-            latlng: L.latLng(point[2], point[3]),
-            risk: data.riskilista_kentille[data.lista_kentistä.indexOf(point)],
-            distance: point[1]
-        };
-    });
-
-    // Pisteiden piirtäminen kartalle
-    for (var i = 0; i < points.length; i++) {
-        var point = points[i];
-        L.marker(point.latlng)
-            .addTo(map)
-            .bindPopup(point.name + "<br>Riski jäädä kiinni: " + point.risk + "<br>Etäisyys: " + point.distance.toFixed(2) + " km");
-    }
-});
-
-
- */
-
 async function getData() {
     const response = await fetch('http://127.0.0.1:3000/kokeilu/')
     const json = await response.json()
@@ -55,9 +25,10 @@ async function getData() {
 }
 
 async function gameUpdate() {
-    let data = await getData()
+    const data = await getData()
     updateStats(data.pstats)
-    let airports = data.lista_kentista
+    const airports = data.lista_kentista
+
     airportMarkers.clearLayers();
     for(let j = 0; j < airports.length; j++){
         if(j === 0) {
@@ -109,5 +80,15 @@ async function gameUpdate() {
 function updateStats(data) {
     const moneydisplay = document.getElementById('Money')
     moneydisplay.innerHTML = data[0]
+    const timedisplay = document.getElementById('Time')
+    timedisplay.innerHTML = data[1]
+    const co2display = document.getElementById('CO2')
+    co2display.innerHTML = data[2]
+    const weatherdisplay = document.getElementById('Weather')
+    weatherdisplay.innerHTML = data[3]
+    const rangedisplay = document.getElementById('Range')
+    rangedisplay.innerHTML = data[4]
+    const locdisplay = document.getElementById('Location')
+    locdisplay.innerHTML = data[5]
 }
 
