@@ -46,11 +46,9 @@ header
 
     
 }
-footer
+#main footer
 {
-    /* footer pysyy sivun alhaalla*/
     
-
     background: linear-gradient(to top, #0000FF, #FFFFFF);
     width: 100%;
     height: 100px;
@@ -60,11 +58,11 @@ footer
     position: relative;
     overflow: hidden;
     color: #000000;
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100px;
+    
+    
+    
+    
+    
 }
 li
 {
@@ -166,3 +164,19 @@ img.huechange { filter: hue-rotate(120deg); }
     overflow: hidden;
     text-align: center;
 }
+
+
+#kokeilu footer {
+        background: linear-gradient(to top, #0000FF, #FFFFFF);
+        width: 100%;
+        height: 100px;
+        text-align: center;
+        padding: 4rem;
+        margin: -15px;
+        position: relative;
+        overflow: hidden;
+        color: #000000;
+        position: fixed;
+        left: 0;
+        bottom: 0;
+    }
