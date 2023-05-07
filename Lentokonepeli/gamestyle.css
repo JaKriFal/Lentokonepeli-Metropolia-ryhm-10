@@ -73,3 +73,5 @@ a
     width: 100%;
    
 }
+
+img.huechange { filter: hue-rotate(120deg); }

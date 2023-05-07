@@ -8,23 +8,12 @@ map.setView([60, 24], 7);
 
 //constants
 const airportMarkers = L.featureGroup().addTo(map);
-const blueIcon = L.divIcon({ className: 'blue-icon' });
+
 
 
 let restartButton = document.getElementById('restartbutton')
 restartButton.addEventListener('click', async function() {
-    const data = await getList()
-    const airports = data.lista_kentista
-    for(let j = 0; j < airports.length; j++){
-
-        const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
-        const popupContent = document.createElement('div');
-        const h4 = document.createElement('h4');
-        h4.innerHTML = airports[j][0]
-        popupContent.append(h4);
-        testmarker.bindPopup(popupContent);
-
-    }
+        await gameUpdate()
 
     })
 
@@ -58,10 +47,34 @@ $.getJSON("http://127.0.0.1:3000/kokeilu/", function(data) {
 
  */
 
-async function getList() {
+async function getData() {
     const response = await fetch('http://127.0.0.1:3000/kokeilu/')
     const json = await response.json()
     console.log(json)
     return json
+}
+
+async function gameUpdate() {
+    const data = await getData()
+    const airports = data.lista_kentista
+    const selfmarker = L.marker([data.omapaikka[1], data.omapaikka[2]]).addTo(map);
+    airportMarkers.addLayer(selfmarker)
+    const popupContent = document.createElement('div');
+    const h4 = document.createElement('h4');
+        h4.innerHTML = data.omapaikka[0]
+        popupContent.append(h4);
+        selfmarker.bindPopup(popupContent);
+        selfmarker._icon.classList.add("huechange");
+    for(let j = 0; j < airports.length; j++){
+
+        const testmarker = L.marker([airports[j][1], airports[j][2]]).addTo(map);
+        airportMarkers.addLayer(testmarker)
+        const popupContent = document.createElement('div');
+        const h4 = document.createElement('h4');
+        h4.innerHTML = airports[j][0]
+        popupContent.append(h4);
+        testmarker.bindPopup(popupContent);
+
+    }
 }
 

@@ -221,10 +221,12 @@ def liiku(number):
 @app.route('/kokeilu/')
 def airports():
 
+    curr = [Player.player_location, Player.current_lat, Player.current_lon]
     result = Player.move()
 
     response = {
         'status': 'ok',
+        'omapaikka': curr,
         "lista_kentista": result,
         "riskilista_kentille": Player.risk_list,
     }
