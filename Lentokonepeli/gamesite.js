@@ -10,7 +10,6 @@ map.setView([60, 24], 7);
 const airportMarkers = L.featureGroup().addTo(map);
 
 
-
 let startButton = document.getElementById('startbutton')
 startButton.addEventListener('click', async function() {
         await gameUpdate()
@@ -112,11 +111,11 @@ function updateStats(arg) {
     const data = arg.pstats
     const weather = arg.weather
     const moneydisplay = document.getElementById('Money')
-    moneydisplay.innerHTML = data[0].toFixed(2)
-    const timedisplay = document.getElementById('Time')
+    moneydisplay.innerHTML = data[0].toFixed(2) + " €"
+    const timedisplay = document.getElementById('Time') + " h"
     timedisplay.innerHTML = data[1].toFixed(2)
     const co2display = document.getElementById('CO2')
-    co2display.innerHTML = data[2].toFixed(2)
+    co2display.innerHTML = data[2].toFixed(2) + " kg"
     const weatherdisplay = document.getElementById('Weather')
     weatherdisplay.innerHTML = weather[1] ? weather[0] + ' C, ' + weather[1] : "Unknown"
     const rangedisplay = document.getElementById('Range')
