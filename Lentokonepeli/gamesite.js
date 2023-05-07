@@ -56,6 +56,7 @@ async function getData() {
 
 async function gameUpdate() {
     let data = await getData()
+    updateStats(data.pstats)
     let airports = data.lista_kentista
     airportMarkers.clearLayers();
     for(let j = 0; j < airports.length; j++){
@@ -73,7 +74,7 @@ async function gameUpdate() {
             robButton.innerHTML = 'Ryöstä';
             popupContent.append(robButton);
             robButton.addEventListener('click', async function () {
-                    const flyresponse = await fetch(`http://127.0.0.1:3000/kokeilu3/`)
+                    const robresponse = await fetch(`http://127.0.0.1:3000/kokeilu3/`)
                     const robjson = robresponse.json
                     console.log(robjson)
                     await gameUpdate()
@@ -104,5 +105,9 @@ async function gameUpdate() {
 
     }
 
+}
+function updateStats(data) {
+    const moneydisplay = document.getElementById('Money')
+    moneydisplay.innerHTML = data[0]
 }
 
