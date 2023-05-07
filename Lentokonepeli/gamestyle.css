@@ -48,7 +48,9 @@ header
 }
 footer
 {
-    /* sinivalko gradient tausta. alhaalta ylös*/
+    /* footer pysyy sivun alhaalla*/
+    
+
     background: linear-gradient(to top, #0000FF, #FFFFFF);
     width: 100%;
     height: 100px;
@@ -58,6 +60,11 @@ footer
     position: relative;
     overflow: hidden;
     color: #000000;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100px;
 }
 li
 {
@@ -124,4 +131,38 @@ img.huechange { filter: hue-rotate(120deg); }
 *
 {
    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+#about p
+{
+    
+    font-size: 1.5rem;
+    color: #000000;
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+#home p
+{
+    
+    font-size: 1.5rem;
+    color: #000000;
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+#home h1
+{
+    
+    font-size: 2.5rem;
+    color: #000000;
+    padding: 1rem;
+    margin: 0px;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
 }
