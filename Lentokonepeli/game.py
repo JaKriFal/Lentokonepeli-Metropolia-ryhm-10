@@ -196,6 +196,21 @@ Player.upgrade_loc(int(1))
 Player.time = 0
 Player.co_2 = 0
 
+@app.route('/upgrades/<arg>')
+def upgrade_plane(arg):
+    if int(arg) == 2:
+        Player.money -= 2000000
+        Player.range = str(350)
+        Player.upgrades['range'] = True
+        print('range upgrade successful!')
+    Player.move()
+    response = {
+        'status': 'ok',
+        'upgrades': Player.upgrades
+    }
+    return jsonify(response)
+
+
 @app.route('/kokeilu5/<maakoodi>')
 def vaihda_maa(maakoodi):       # vaihtaa maan
 
@@ -242,7 +257,7 @@ def Testi():
         'status': 'ok',
         "onnistuit": Player.Robbery()[0],
         "rahat": Player.money,
-        "paljonko_rahaa_tuli/meni": Player.Robbery()[1],
+        "tulot": Player.Robbery()[1],
 
 
 
