@@ -95,7 +95,7 @@ async function gameUpdate() {
             popupContent.append(flyButton);
                     flyButton.addEventListener('click', async function () {
             const flyresponse = await fetch(`http://127.0.0.1:3000/kokeilu2/${j+1}`)
-            const flyjson = flyresponse.json
+            const flyjson = flyresponse.json()
             console.log(flyjson)
             await gameUpdate()
 
