@@ -50,6 +50,36 @@ class User:
         self.risk_list = []
         self.result = []
 
+    def reset(self):
+        self.game_on = True
+        self.name = "name"
+        self.money = 4500000
+        # upgrade kentän riski * tämä = paljonko rahaa saa ryöstöstä
+        self.money_factor = random.randint(12000, 17000)
+        self.time = 0
+        self.current_lon = str(24.957996168)
+        self.current_lat = str(60.316998732)
+        self.airport_type = "small_airport"  # upgrade
+        self.range = str(250)  # upgrade
+        self.current_country = "FI"
+        self.battery_charge_level = self.range
+        self.battery_charging_rate = 30  # upgrade montako kilsaa tulee tunnissa rangea
+        self.player_location = "helsinki"
+        self.upgrades = {"money_factor": False, "airport_type": True, "range": False, "battery_charging_rate": False,
+                         "risk_factor": False, "co_2_rate": False, "flight_speed": False}
+        self.risk = 0
+        # upgrade arpoo riskiä kentälle etäisyys / risk factor
+        self.risk_factor = random.randint(80, 120)
+        self.co_2 = 0
+        self.co_2_rate = 0.02  # upgrade  etäisyys kertaa tämä on montako tonnia co2 tulee
+        # upgrade  etäisyys kertaa tämä on montako tuntia kesti lennossa
+        self.flight_speed = 0.01
+        self.difficulty = 5000000
+        self.vic_con = False
+        self.weather = 0
+        self.risk_list = []
+        self.result = []
+
     def get_score(self):
         return float(self.money - self.time * 10 - self.co_2 * 15)
 
@@ -160,11 +190,11 @@ class User:
         # nollataan riski
         self.risk = 0
 
-
 Player = User()
 Player.move()
 Player.upgrade_loc(int(1))
-
+Player.time = 0
+Player.co_2 = 0
 
 @app.route('/kokeilu5/<maakoodi>')
 def vaihda_maa(maakoodi):       # vaihtaa maan
@@ -177,7 +207,19 @@ def vaihda_maa(maakoodi):       # vaihtaa maan
     }
     return jsonify(response)
 
+@app.route('/reset/')
+def game_start():  # aloittaa uuden pelin
+    Player.reset()
+    Player.move()
+    Player.upgrade_loc(int(1))
+    Player.time = 0
+    Player.co_2 = 0
 
+
+    response = {
+        'status': 'reset ok',
+    }
+    return jsonify(response)
 @app.route('/kokeilu4/')
 def Maan_vaihto():  # kertoo mihin maahan voi lentää
     Player.Change_country()

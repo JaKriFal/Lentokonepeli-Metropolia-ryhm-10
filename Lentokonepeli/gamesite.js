@@ -17,6 +17,15 @@ startButton.addEventListener('click', async function() {
 
     })
 
+let resetButton = document.getElementById('resetbutton')
+resetButton.addEventListener('click', async function() {
+        const response = await fetch('http://127.0.0.1:3000/reset/')
+        const resetjson = response.json()
+        console.log(resetjson)
+        await gameUpdate()
+
+    })
+
 async function getData() {
     const response = await fetch('http://127.0.0.1:3000/kokeilu/')
     const json = await response.json()
@@ -26,8 +35,9 @@ async function getData() {
 
 async function gameUpdate() {
     const data = await getData()
-    updateStats(data.pstats)
+    updateStats(data)
     const airports = data.lista_kentista
+    const risks = data.riskilista_kentille
 
     airportMarkers.clearLayers();
     for(let j = 0; j < airports.length; j++){
@@ -36,8 +46,11 @@ async function gameUpdate() {
             airportMarkers.addLayer(testmarker)
             const popupContent = document.createElement('div');
             const h4 = document.createElement('h4');
+            const h5 = document.createElement('h5')
             h4.innerHTML = airports[j][0]
+            h5.innerHTML = risks[j]
             popupContent.append(h4);
+            popupContent.append(h5)
             testmarker.bindPopup(popupContent);
             testmarker._icon.classList.add("huechange");
             const robButton = document.createElement('button');
@@ -55,8 +68,11 @@ async function gameUpdate() {
             airportMarkers.addLayer(testmarker)
             const popupContent = document.createElement('div');
             const h4 = document.createElement('h4');
+            const h5 = document.createElement('h5')
             h4.innerHTML = airports[j][0]
+            h5.innerHTML = risks[j]
             popupContent.append(h4);
+            popupContent.append(h5)
             testmarker.bindPopup(popupContent);
             const flyButton = document.createElement('button');
             flyButton.classList.add('button');
@@ -77,7 +93,9 @@ async function gameUpdate() {
     }
 
 }
-function updateStats(data) {
+function updateStats(arg) {
+    const data = arg.pstats
+    const weather = arg.weather
     const moneydisplay = document.getElementById('Money')
     moneydisplay.innerHTML = data[0]
     const timedisplay = document.getElementById('Time')
@@ -85,10 +103,11 @@ function updateStats(data) {
     const co2display = document.getElementById('CO2')
     co2display.innerHTML = data[2]
     const weatherdisplay = document.getElementById('Weather')
-    weatherdisplay.innerHTML = data[3]
+    weatherdisplay.innerHTML = weather[1] ? weather[0] + ' C, ' + weather[1] : "Unknown"
     const rangedisplay = document.getElementById('Range')
     rangedisplay.innerHTML = data[4]
     const locdisplay = document.getElementById('Location')
     locdisplay.innerHTML = data[5]
+
 }
 
