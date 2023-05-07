@@ -11,8 +11,8 @@ const airportMarkers = L.featureGroup().addTo(map);
 
 
 
-let restartButton = document.getElementById('restartbutton')
-restartButton.addEventListener('click', async function() {
+let startButton = document.getElementById('startbutton')
+startButton.addEventListener('click', async function() {
         await gameUpdate()
 
     })
